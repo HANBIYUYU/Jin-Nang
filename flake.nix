@@ -44,6 +44,10 @@
             ++ lib.optionals stdenv.isDarwin darwinDeps;
 
           shellHook = ''
+            # Point DEVELOPER_DIR to the real Xcode so iOS/macOS SDKs are found
+            # (Nix's mkShell overrides this to a minimal Apple SDK that lacks iOS Simulator)
+            export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+
             # Set FLUTTER_ROOT to the wrapped SDK (where bin/cache/pkg/sky_engine lives)
             export FLUTTER_ROOT=$(dirname $(dirname $(readlink -f $(which flutter))))
             export DART_ROOT=${pkgs.dart}
