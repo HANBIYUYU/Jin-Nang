@@ -8,27 +8,32 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 27),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.xxl * 2), // ~96px
             _buildTitle(context),
-            const Spacer(),
-            _buildFeatureCard(
-              context: context,
-              title: "Vocabulary Learning",
-              bgColor: AppColors.cardBgLight,
+            const SizedBox(height: AppSpacing.xxl * 2),
+            Expanded(
+              child: ListView(
+                children: [
+                  _buildFeatureCard(
+                    context: context,
+                    title: 'Vocabulary Learning',
+                    bgColor: AppColors.neutralGray02, // Changed from hardcoded color to Figma value
+                  ),
+                  const SizedBox(height: AppSpacing.lg), // 24px
+                  _buildFeatureCard(
+                    context: context,
+                    title: 'Dialogue Practice',
+                    bgColor: AppColors.neutralGray03,
+                  ),
+                  // Add padding to bottom to allow scrolling past nav bar if needed
+                  const SizedBox(height: AppSpacing.xxl),
+                ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            _buildFeatureCard(
-              context: context,
-              title: "Dialogue Practice",
-              bgColor: AppColors.cardBgDark,
-            ),
-            const Spacer(flex: 2),
           ],
         ),
       ),
@@ -36,14 +41,10 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
-    return SizedBox(
-      height: 80,
-      width: double.infinity,
-      child: Text(
-        "Study",
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.displayLarge,
-      ),
+    return Text(
+      "Study",
+      textAlign: TextAlign.center,
+      style: Theme.of(context).textTheme.displayLarge,
     );
   }
 
@@ -60,13 +61,19 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 26, bottom: 24),
-        child: Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(
-            title,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+        // Aligned with the original code's spacing, but using AppSpacing where possible
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: AppColors.neutralGray01,
+                  ),
+            ),
+          ],
         ),
       ),
     );
