@@ -156,4 +156,19 @@
 
 ---
 
+---
+
+19. 2026-05-14 00:10 — 更新业务逻辑文档
+
+   - 版本 v1.0 → v1.1
+   - 更新路由表（Study/Toolbox Tab 分离）
+   - 新增 VocabSceneScreen 页面逻辑
+   - Vocab Battle 数据模型扩展（词性、释义、例句、关联词、短语）
+   - 音频系统从"预留"改为"已接入"
+   - 新增公共组件章节（AppCard / AppHeader / IconContainer / SelectableCard）
+   - 新增目录结构章节
+   - 未实现功能清单增加状态列
+
+---
+
 *（下次更新请在此下方继续追加）*
