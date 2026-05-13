@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 9),
+              const SizedBox(height: 20),
               _buildWelcomeSection(),
               const SizedBox(height: 29),
               _buildStatsCards(),
@@ -128,7 +128,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStatIcon(Icons.local_fire_department),
+          _buildStatImage('assets/icon/fire.png'),
           const SizedBox(height: 5),
           const Text(
             'STREAK',
@@ -184,7 +184,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStatIcon(Icons.emoji_events),
+          _buildStatImage('assets/icon/cup.png'),
           const SizedBox(height: 5),
           const Text(
             'RANK',
@@ -208,21 +208,17 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// 统计卡片里的小圆形图标容器（原先两个卡片都用 fire icon，rank 改为 trophy）
-  Widget _buildStatIcon(IconData icon) {
+  Widget _buildStatImage(String assetPath) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      width: 32,
+      height: 32,
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: AppColors.morandiText, width: 1.5),
-        // 用 999 替换魔法数字 26715300
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Icon(
-        icon,
-        size: 16,
-        color: AppColors.morandiText,
-      ),
+      child: Image.asset(assetPath),
     );
   }
 
@@ -251,7 +247,7 @@ class HomeScreen extends StatelessWidget {
                     title: 'Vocab\nLearning',
                     subtitle: '50 words',
                     color: AppColors.straw14,
-                    icon: Icons.book,
+                    iconPath: 'assets/icon/study.png',
                   ),
                 ),
               ),
@@ -263,7 +259,7 @@ class HomeScreen extends StatelessWidget {
                     title: 'Dialogue\nPractice',
                     subtitle: '10 mins',
                     color: AppColors.baliHai30,
-                    icon: Icons.chat,
+                    iconPath: 'assets/icon/dialogue_learning.png',
                   ),
                 ),
               ),
@@ -279,7 +275,7 @@ class HomeScreen extends StatelessWidget {
     required String title,
     required String subtitle,
     required Color color,
-    required IconData icon,
+    required String iconPath,
   }) {
     return Container(
       padding: const EdgeInsets.all(14),
@@ -297,7 +293,7 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildMissionIcon(icon),
+          _buildMissionIcon(iconPath),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -329,8 +325,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMissionIcon(IconData icon) {
-    // 修复：外层容器尺寸与内部 icon 匹配，使用明确的正方形尺寸
+  Widget _buildMissionIcon(String iconPath) {
     return Container(
       width: 48,
       height: 48,
@@ -347,11 +342,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       child: Center(
-        child: Icon(
-          icon,
-          size: 22,
-          color: AppColors.morandiText,
-        ),
+        child: Image.asset(iconPath, width: 22, height: 22),
       ),
     );
   }

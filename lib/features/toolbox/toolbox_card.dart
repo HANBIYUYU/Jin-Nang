@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../widgets/app_header.dart';
 
 // ===================== 数据模型 =====================
 
@@ -165,7 +166,11 @@ class _ToolboxCardState extends State<ToolboxCard> {
           child: Column(
             children: [
               const SizedBox(height: 24),
-              _buildHeader(context),
+              AppHeader(
+                title: 'Vocab Battle',
+                progress: '${_currentIndex + 1}/$_total',
+                onBack: () => context.go('/toolbox'),
+              ),
               const SizedBox(height: 24),
               Expanded(
                 child: SingleChildScrollView(
@@ -187,64 +192,6 @@ class _ToolboxCardState extends State<ToolboxCard> {
           ),
         ),
       ),
-    );
-  }
-
-  // ---------- Header ----------
-
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () => context.go('/toolbox'),
-          child: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: AppColors.morandiText, width: 2.5),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(color: AppColors.morandiText, offset: Offset(3, 3), blurRadius: 0),
-              ],
-            ),
-            child: const Icon(Icons.arrow_back, color: AppColors.morandiText),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.baliHai30,
-              border: Border.all(color: AppColors.morandiText, width: 2.5),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(color: AppColors.morandiText, offset: Offset(3, 3), blurRadius: 0),
-              ],
-            ),
-            child: const Center(
-              child: Text(
-                'Vocab Battle',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.morandiText),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: AppColors.morandiText, width: 2),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            '${_currentIndex + 1}/$_total',
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.morandiText),
-          ),
-        ),
-      ],
     );
   }
 

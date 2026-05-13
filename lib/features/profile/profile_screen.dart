@@ -109,13 +109,10 @@ class ProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.oldRose15,
         border: Border.all(color: AppColors.morandiText, width: 2.389),
-        // 修复：用 999 替换超大魔法数字 26715300
         borderRadius: BorderRadius.circular(999),
       ),
-      child: const Icon(
-        Icons.person,
-        size: 32,
-        color: AppColors.morandiText,
+      child: Center(
+        child: Image.asset('assets/icon/my.png', width: 32, height: 32),
       ),
     );
   }
@@ -144,7 +141,7 @@ class ProfileScreen extends StatelessWidget {
       children: [
         Expanded(
           child: _buildStatCard(
-            icon: Icons.local_fire_department,
+            iconPath: 'assets/icon/fire.png',
             value: '12',
             label: 'Day Streak',
             color: AppColors.lavenderPurple,
@@ -153,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildStatCard(
-            icon: Icons.book,
+            iconPath: 'assets/icon/study.png',
             value: '248',
             label: 'Words',
             color: AppColors.baliHai30,
@@ -162,7 +159,7 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildStatCard(
-            icon: Icons.star,
+            iconPath: 'assets/icon/cup.png',
             value: '4.8',
             label: 'Avg Score',
             color: AppColors.straw14,
@@ -173,7 +170,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildStatCard({
-    required IconData icon,
+    required String iconPath,
     required String value,
     required String label,
     required Color color,
@@ -194,7 +191,7 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(icon, size: 20, color: AppColors.morandiText),
+          Image.asset(iconPath, width: 20, height: 20),
           const SizedBox(height: 4),
           Text(
             value,
@@ -220,9 +217,9 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildSettingsList() {
     final items = [
-      (Icons.notifications_outlined, 'Notifications', AppColors.lavenderPurple),
-      (Icons.language, 'Language Settings', AppColors.baliHai30),
-      (Icons.help_outline, 'Help & FAQ', AppColors.straw14),
+      ('Notifications', AppColors.lavenderPurple),
+      ('Language Settings', AppColors.baliHai30),
+      ('Help & FAQ', AppColors.straw14),
     ];
 
     return Column(
@@ -240,13 +237,13 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 16),
         ...items.map((item) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: _buildSettingsItem(item.$1, item.$2, item.$3),
+              child: _buildSettingsItem(item.$1, item.$2),
             )),
       ],
     );
   }
 
-  Widget _buildSettingsItem(IconData icon, String label, Color iconColor) {
+  Widget _buildSettingsItem(String label, Color iconColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -270,7 +267,13 @@ class ProfileScreen extends StatelessWidget {
               color: iconColor,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, size: 18, color: AppColors.morandiText),
+            child: Center(
+              child: Image.asset(
+                'assets/icon/my.png',
+                width: 18,
+                height: 18,
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

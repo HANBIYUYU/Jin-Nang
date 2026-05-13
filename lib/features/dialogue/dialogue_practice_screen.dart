@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../widgets/app_header.dart';
 
 // 关卡数据
 class _LevelInfo {
@@ -81,8 +82,11 @@ class DialoguePracticeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             children: [
-              const SizedBox(height: 38),
-              _buildHeader(context),
+              const SizedBox(height: 24),
+              AppHeader(
+                title: 'Dialogue Practice',
+                onBack: () => context.go('/study'),
+              ),
               const SizedBox(height: 32),
               _buildProgressSummary(),
               const SizedBox(height: 32),
@@ -101,56 +105,6 @@ class DialoguePracticeScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () => context.go('/study'),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.baliHai30,
-              border: Border.all(color: AppColors.morandiText, width: 2.389),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.arrow_back,
-              size: 20,
-              color: AppColors.morandiText,
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.baliHai30,
-              border: Border.all(color: AppColors.morandiText, width: 2.389),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.morandiText,
-                  offset: Offset(4, 4),
-                  blurRadius: 0,
-                ),
-              ],
-            ),
-            child: const Text(
-              'Dialogue Practice',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-                color: AppColors.morandiText,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 

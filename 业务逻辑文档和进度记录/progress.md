@@ -111,4 +111,49 @@
 
 ---
 
+14. 2026-05-13 23:08 — 提取 4 个公共组件
+
+   - AppCard：粗边框 + 硬阴影卡片容器
+   - AppHeader：返回按钮 + 标题标签 + 可选进度
+   - IconContainer：带边框图标方块
+   - SelectableCard：带锁定状态的场景/工具卡片
+   - 替换 vocab_scene / dialogue_practice / toolbox_card / toolbox_screen
+   - Home 顶部间距 9 → 20（因 Yo Alex 卡片需要更往下）
+
+---
+
+15. 2026-05-13 23:22 — 底部导航栏重设计 + 全量图标替换
+
+   - 重写 main_shell：贯穿黑线、选中倾斜动画、本地 PNG 图标
+   - SelectableCard 锁定态保留原样文字图标，仅去阴影 + 加锁标
+   - Home：fire → fire.png、cup → cup.png、study.png、dialogue_learning.png
+   - Profile：头像/统计/设置项全部换本地图标
+
+---
+
+16. 2026-05-13 23:30 — 修复 pubspec 资源路径
+
+   - 移除不存在的 assets/images/Icon-*.png 引用
+   - 修正 YAML 缩进，icon 资源改为显式文件列表
+
+---
+
+17. 2026-05-13 23:41 — SelectableCard 锁定态背景互换
+
+   - 锁定态：卡片背景 = 彩色，图标框 = 白色
+   - 已解锁：保持不变（卡片白，图标框彩色）
+   - 整体 Opacity 0.45 罩灰保留
+
+---
+
+---
+
+18. 2026-05-13 23:55 — SelectableCard 配色全部统一
+
+   - 取消锁定态与解锁态的配色差异
+   - 全部统一：卡片背景白色，图标框彩色
+   - 锁定态仍保留 Opacity 0.35 罩灰 + 去阴影 + 锁标
+
+---
+
 *（下次更新请在此下方继续追加）*

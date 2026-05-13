@@ -10,6 +10,24 @@ class MainShell extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
+  static const _navItems = [
+    _NavItemData(
+      iconPath: 'assets/icon/study.png',
+      label: 'STUDY',
+      selectedColor: AppColors.straw14,
+    ),
+    _NavItemData(
+      iconPath: 'assets/icon/toolbox.png',
+      label: 'TOOLBOX',
+      selectedColor: AppColors.baliHai30,
+    ),
+    _NavItemData(
+      iconPath: 'assets/icon/my.png',
+      label: 'MY',
+      selectedColor: AppColors.oldRose15,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,57 +37,42 @@ class MainShell extends StatelessWidget {
   }
 
   Widget _buildBottomNavBar(BuildContext context) {
-    // ClipRRect + DecoratedBox 分离，解决 border+radius 在同一 Container 上渲染异常
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(32),
-        topRight: Radius.circular(32),
-      ),
-      child: Container(
-        height: 84,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            top: BorderSide(color: Colors.black, width: 4),
+    return Container(
+      height: 92,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+        border: Border(
+          top: BorderSide(color: Colors.black, width: 4),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0, -4),
+            blurRadius: 12,
           ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(
-              context: context,
-              icon: Icons.book,
-              label: 'Study',
-              index: 0,
-              selectedColor: AppColors.straw14,
-            ),
-            _buildNavItem(
-              context: context,
-              icon: Icons.build,
-              label: 'Toolbox',
-              index: 1,
-              selectedColor: AppColors.baliHai30,
-            ),
-            _buildNavItem(
-              context: context,
-              icon: Icons.person,
-              label: 'My',
-              index: 2,
-              selectedColor: AppColors.oldRose15,
-            ),
-          ],
-        ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(_navItems.length, (index) {
+          return _buildNavItem(
+            context: context,
+            data: _navItems[index],
+            index: index,
+          );
+        }),
       ),
     );
   }
 
   Widget _buildNavItem({
     required BuildContext context,
-    required IconData icon,
-    required String label,
+    required _NavItemData data,
     required int index,
-    required Color selectedColor,
   }) {
     final isSelected = navigationShell.currentIndex == index;
 
@@ -77,7 +80,6 @@ class MainShell extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          // 用 borderRadius 限制 ripple 扩散区域
           borderRadius: BorderRadius.circular(16),
           onTap: () {
             navigationShell.goBranch(
@@ -87,47 +89,69 @@ class MainShell extends StatelessWidget {
           },
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 固定外层尺寸，防止 icon 大小变化引发布局抖动
               SizedBox(
-                width: 48,
-                height: 48,
+                width: 52,
+                height: 52,
                 child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: isSelected ? selectedColor : Colors.white,
-                      border: Border.all(
-                        color: AppColors.morandiText,
-                        width: 2.5,
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: isSelected
-                          ? const [
-                              BoxShadow(
-                                color: AppColors.morandiText,
-                                offset: Offset(3, 3),
-                                blurRadius: 0,
-                              ),
-                            ]
-                          : null,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween<double>(
+                      begin: isSelected ? 0 : 0.12,
+                      end: isSelected ? 0.12 : 0,
                     ),
-                    child: Icon(
-                      icon,
-                      size: 20, // 固定 icon 尺寸，不再随 isSelected 变化
-                      color: isSelected ? AppColors.morandiText : AppColors.naturalGray19,
-                    ),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOutBack,
+                    builder: (context, angle, child) {
+                      return Transform.rotate(
+                        angle: angle,
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: isSelected ? data.selectedColor : Colors.white,
+                            border: Border.all(
+                              color: AppColors.morandiText,
+                              width: 2.5,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: isSelected
+                                ? const [
+                                    BoxShadow(
+                                      color: AppColors.morandiText,
+                                      offset: Offset(3, 3),
+                                      blurRadius: 0,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              data.iconPath,
+                              width: 22,
+                              height: 22,
+                              color: isSelected
+                                  ? AppColors.morandiText
+                                  : AppColors.naturalGray19,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
               const SizedBox(height: 2),
               Text(
-                label,
+                data.label,
                 style: TextStyle(
                   fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  color: isSelected ? AppColors.morandiText : AppColors.naturalGray19,
-                  letterSpacing: 0,
+                  fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                  color: isSelected
+                      ? AppColors.morandiText
+                      : AppColors.naturalGray19,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
@@ -136,4 +160,16 @@ class MainShell extends StatelessWidget {
       ),
     );
   }
+}
+
+class _NavItemData {
+  final String iconPath;
+  final String label;
+  final Color selectedColor;
+
+  const _NavItemData({
+    required this.iconPath,
+    required this.label,
+    required this.selectedColor,
+  });
 }
