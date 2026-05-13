@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'theme/app_theme.dart';
@@ -6,8 +7,12 @@ import 'features/shell/main_shell.dart';
 import 'features/home/home_screen.dart';
 import 'features/toolbox/toolbox_screen.dart';
 import 'features/profile/profile_screen.dart';
+import 'features/vocab/vocab_learning_screen.dart';
+import 'features/vocab/vocab_card_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 
@@ -40,6 +45,16 @@ final GoRouter _router = GoRouter(
             GoRoute(
               path: '/toolbox',
               builder: (context, state) => const ToolboxScreen(),
+              routes: [
+                GoRoute(
+                  path: 'vocab-learning',
+                  builder: (context, state) => const VocabLearningScreen(),
+                ),
+                GoRoute(
+                  path: 'vocab-card',
+                  builder: (context, state) => const VocabCardScreen(),
+                ),
+              ],
             ),
           ],
         ),

@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
-class ToolboxScreen extends StatelessWidget {
-  const ToolboxScreen({super.key});
+class VocabLearningScreen extends StatelessWidget {
+  const VocabLearningScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,39 +14,29 @@ class ToolboxScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 69),
-              _buildTitleSection(),
-              const SizedBox(height: 40),
+              const SizedBox(height: 39),
+              _buildHeader(context),
+              const SizedBox(height: 48),
               Expanded(
                 child: ListView(
                   children: [
-                    _buildToolCard(
+                    _buildSceneCard(
                       context: context,
                       title: 'Restaurant',
-                      subtitle: 'Ordering food & drinks.',
-                      color: AppColors.baliHai30,
+                      subtitle: 'Master ordering food and drinks.',
                       icon: Icons.restaurant,
+                      color: AppColors.baliHai30,
                       isLocked: false,
-                      onTap: () => context.go('/toolbox/vocab-learning'),
+                      onTap: () => context.go('/toolbox/vocab-card'),
                     ),
                     const SizedBox(height: 24),
-                    _buildToolCard(
+                    _buildSceneCard(
                       context: context,
                       title: 'Supermarket',
-                      subtitle: 'Shopping lists & checkout.',
-                      color: AppColors.lavenderPurple,
+                      subtitle: 'Shopping lists and checkout.',
                       icon: Icons.shopping_cart,
-                      isLocked: true,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildToolCard(
-                      context: context,
-                      title: 'Airport',
-                      subtitle: 'Check-in, boarding & more.',
-                      color: AppColors.straw14,
-                      icon: Icons.flight,
+                      color: AppColors.lavenderPurple,
                       isLocked: true,
                     ),
                     const SizedBox(height: 48),
@@ -60,46 +50,63 @@ class ToolboxScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTitleSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildHeader(BuildContext context) {
+    return Row(
       children: [
-        Text(
-          'TOOLBOX',
-          style: TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.w900,
-            color: AppColors.morandiText,
-            height: 37.8 / 36,
-            letterSpacing: -0.9,
-            shadows: const [
-              Shadow(
-                color: AppColors.lavenderPurple,
-                offset: Offset(3, 3),
-                blurRadius: 0,
-              ),
-            ],
+        // 返回按钮
+        GestureDetector(
+          onTap: () => context.go('/toolbox'),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.baliHai30,
+              border: Border.all(color: AppColors.morandiText, width: 2.389),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 20,
+              color: AppColors.morandiText,
+            ),
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          'Useful phrases for real life.',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppColors.morandiText.withValues(alpha: 0.7),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.baliHai30,
+              border: Border.all(color: AppColors.morandiText, width: 2.389),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(
+                  color: AppColors.morandiText,
+                  offset: Offset(4, 4),
+                  blurRadius: 0,
+                ),
+              ],
+            ),
+            child: const Text(
+              'Vocab Learning',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: AppColors.morandiText,
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildToolCard({
+  Widget _buildSceneCard({
     required BuildContext context,
     required String title,
     required String subtitle,
-    required Color color,
     required IconData icon,
+    required Color color,
     required bool isLocked,
     VoidCallback? onTap,
   }) {
@@ -109,11 +116,9 @@ class ToolboxScreen extends StatelessWidget {
         onTap: isLocked ? null : onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          // 移除硬编码高度，改为内容自适应 + 最小高度
           constraints: const BoxConstraints(minHeight: 100),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            // 修复：非锁定状态正确使用传入的 color 参数
             color: isLocked ? AppColors.whisper15 : color,
             border: Border.all(
               color: isLocked
@@ -199,8 +204,10 @@ class ToolboxScreen extends StatelessWidget {
       width: 68,
       height: 68,
       decoration: BoxDecoration(
+        // 修复：非锁定图标容器用半透明白底而非完全覆盖颜色
         color: isLocked ? Colors.white : Colors.white.withValues(alpha: 0.4),
         border: Border.all(
+          // 修复：统一使用 withValues() 替代弃用的 withOpacity()
           color: isLocked
               ? AppColors.shark40.withValues(alpha: 0.2)
               : AppColors.morandiText,
@@ -211,7 +218,8 @@ class ToolboxScreen extends StatelessWidget {
       child: Center(
         child: Icon(
           icon,
-          size: 30,
+          // 修复：icon 尺寸从 32 调整为 28，避免紧贴容器边缘
+          size: 28,
           color: isLocked
               ? AppColors.shark40.withValues(alpha: 0.25)
               : AppColors.morandiText,
