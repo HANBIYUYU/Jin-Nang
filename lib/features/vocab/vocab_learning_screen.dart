@@ -1,48 +1,89 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
-class VocabLearningScreen extends StatelessWidget {
+// ===================== 词汇数据 =====================
+
+class _VocabItem {
+  final String chinese;
+  final String pinyin;
+  final String english;
+  final String audioAsset;
+
+  const _VocabItem({
+    required this.chinese,
+    required this.pinyin,
+    required this.english,
+    required this.audioAsset,
+  });
+}
+
+const _vocabList = [
+  _VocabItem(chinese: '米饭', pinyin: 'mǐfàn', english: 'cooked rice', audioAsset: 'assets/audio/rice.mp3'),
+  _VocabItem(chinese: '面条', pinyin: 'miàntiáo', english: 'noodles', audioAsset: 'assets/audio/noodles.mp3'),
+  _VocabItem(chinese: '水', pinyin: 'shuǐ', english: 'water', audioAsset: 'assets/audio/water.mp3'),
+  _VocabItem(chinese: '茶', pinyin: 'chá', english: 'tea', audioAsset: 'assets/audio/tea.mp3'),
+  _VocabItem(chinese: '饭店', pinyin: 'fàndiàn', english: 'restaurant', audioAsset: 'assets/audio/restaurant.mp3'),
+  _VocabItem(chinese: '吃', pinyin: 'chī', english: 'to eat', audioAsset: 'assets/audio/eat.mp3'),
+];
+
+// ===================== VocabLearningScreen =====================
+
+class VocabLearningScreen extends StatefulWidget {
   const VocabLearningScreen({super.key});
 
   @override
+  State<VocabLearningScreen> createState() => _VocabLearningScreenState();
+}
+
+class _VocabLearningScreenState extends State<VocabLearningScreen> {
+  final Set<int> _clickedCards = {};
+  int _highlightedIndex = -1;
+  bool get _allClicked => _clickedCards.length >= _vocabList.length;
+
+  void _onCardTap(int index) {
+    if (_highlightedIndex == index) return;
+    setState(() {
+      _clickedCards.add(index);
+      _highlightedIndex = index;
+    });
+    Timer(const Duration(milliseconds: 200), () {
+      if (mounted) setState(() => _highlightedIndex = -1);
+    });
+    debugPrint('[Audio] Would play: ${_vocabList[index].audioAsset}');
+  }
+
+  void _goToVocabCard() => context.go('/toolbox/vocab-card');
+  void _goBack() => context.go('/toolbox');
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.springWood14,
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: AppColors.springWood14,
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             children: [
               const SizedBox(height: 39),
-              _buildHeader(context),
-              const SizedBox(height: 48),
+              _buildHeader(),
+              const SizedBox(height: 24),
+              _buildTitle(),
+              const SizedBox(height: 24),
               Expanded(
-                child: ListView(
-                  children: [
-                    _buildSceneCard(
-                      context: context,
-                      title: 'Restaurant',
-                      subtitle: 'Master ordering food and drinks.',
-                      icon: Icons.restaurant,
-                      color: AppColors.baliHai30,
-                      isLocked: false,
-                      onTap: () => context.go('/toolbox/vocab-card'),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildSceneCard(
-                      context: context,
-                      title: 'Supermarket',
-                      subtitle: 'Shopping lists and checkout.',
-                      icon: Icons.shopping_cart,
-                      color: AppColors.lavenderPurple,
-                      isLocked: true,
-                    ),
-                    const SizedBox(height: 48),
-                  ],
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, crossAxisSpacing: 16, mainAxisSpacing: 16, childAspectRatio: 0.85,
+                  ),
+                  itemCount: _vocabList.length,
+                  itemBuilder: (context, index) => _buildVocabCard(index),
                 ),
               ),
+              const SizedBox(height: 16),
+              _buildNextButton(),
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -50,25 +91,19 @@ class VocabLearningScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Row(
       children: [
-        // 返回按钮
         GestureDetector(
-          onTap: () => context.go('/toolbox'),
+          onTap: _goBack,
           child: Container(
-            width: 40,
-            height: 40,
+            width: 40, height: 40,
             decoration: BoxDecoration(
               color: AppColors.baliHai30,
               border: Border.all(color: AppColors.morandiText, width: 2.389),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.arrow_back,
-              size: 20,
-              color: AppColors.morandiText,
-            ),
+            child: const Icon(Icons.arrow_back, size: 20, color: AppColors.morandiText),
           ),
         ),
         const SizedBox(width: 12),
@@ -79,150 +114,92 @@ class VocabLearningScreen extends StatelessWidget {
               color: AppColors.baliHai30,
               border: Border.all(color: AppColors.morandiText, width: 2.389),
               borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.morandiText,
-                  offset: Offset(4, 4),
-                  blurRadius: 0,
-                ),
-              ],
+              boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(4, 4), blurRadius: 0)],
             ),
-            child: const Text(
-              'Vocab Learning',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-                color: AppColors.morandiText,
-              ),
-            ),
+            child: const Text('Vocab Learning', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSceneCard({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required bool isLocked,
-    VoidCallback? onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: isLocked ? null : onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 100),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isLocked ? AppColors.whisper15 : color,
-            border: Border.all(
-              color: isLocked
-                  ? AppColors.shark40.withValues(alpha: 0.2)
-                  : AppColors.morandiText,
-              width: 2.389,
+  Widget _buildTitle() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: AppColors.morandiText, width: 2),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(3, 3), blurRadius: 0)],
+      ),
+      child: const Text('先来学学这几个词', textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
+    );
+  }
+
+  Widget _buildVocabCard(int index) {
+    final vocab = _vocabList[index];
+    final isHighlighted = _highlightedIndex == index;
+    final hasClicked = _clickedCards.contains(index);
+
+    return GestureDetector(
+      onTap: () => _onCardTap(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          color: isHighlighted ? AppColors.straw14 : Colors.white,
+          border: Border.all(color: hasClicked ? AppColors.semanticGreen : AppColors.morandiText, width: hasClicked ? 2.5 : 2),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(3, 3), blurRadius: 0)],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(vocab.chinese, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(color: AppColors.lavenderPurple.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(6)),
+              child: Text(vocab.pinyin, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.morandiText)),
             ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: isLocked
-                ? null
-                : const [
-                    BoxShadow(
-                      color: AppColors.morandiText,
-                      offset: Offset(4, 4),
-                      blurRadius: 0,
-                    ),
-                  ],
-          ),
-          child: Stack(
-            children: [
-              Row(
-                children: [
-                  _buildIconContainer(icon, color, isLocked),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                            color: isLocked
-                                ? AppColors.shark40.withValues(alpha: 0.4)
-                                : AppColors.morandiText,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: isLocked
-                                ? AppColors.shark40.withValues(alpha: 0.3)
-                                : AppColors.stormGray32,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (isLocked)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    decoration: const BoxDecoration(
-                      color: AppColors.mercury25,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.lock,
-                      size: 16,
-                      color: AppColors.shark40,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+            const SizedBox(height: 8),
+            Text(vocab.english, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.morandiText.withValues(alpha: 0.6))),
+            const SizedBox(height: 8),
+            if (hasClicked)
+              const Icon(Icons.check_circle, size: 18, color: AppColors.semanticGreen)
+            else
+              Icon(Icons.volume_up, size: 18, color: AppColors.morandiText.withValues(alpha: 0.3)),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildIconContainer(IconData icon, Color color, bool isLocked) {
-    return Container(
-      width: 68,
-      height: 68,
-      decoration: BoxDecoration(
-        // 修复：非锁定图标容器用半透明白底而非完全覆盖颜色
-        color: isLocked ? Colors.white : Colors.white.withValues(alpha: 0.4),
-        border: Border.all(
-          // 修复：统一使用 withValues() 替代弃用的 withOpacity()
-          color: isLocked
-              ? AppColors.shark40.withValues(alpha: 0.2)
-              : AppColors.morandiText,
-          width: 2.5,
+  Widget _buildNextButton() {
+    return GestureDetector(
+      onTap: _allClicked ? _goToVocabCard : null,
+      child: Container(
+        width: double.infinity,
+        height: 56,
+        decoration: BoxDecoration(
+          color: _allClicked ? AppColors.baliHai30 : AppColors.whisper15,
+          border: Border.all(
+            color: _allClicked ? AppColors.morandiText : AppColors.shark40.withValues(alpha: 0.2),
+            width: 2.5,
+          ),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: _allClicked ? const [BoxShadow(color: AppColors.morandiText, offset: Offset(3, 3), blurRadius: 0)] : null,
         ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Center(
-        child: Icon(
-          icon,
-          // 修复：icon 尺寸从 32 调整为 28，避免紧贴容器边缘
-          size: 28,
-          color: isLocked
-              ? AppColors.shark40.withValues(alpha: 0.25)
-              : AppColors.morandiText,
+        child: Center(
+          child: Text(
+            _allClicked ? '学完了，去练习 →' : '点击卡片学习 (${_clickedCards.length}/${_vocabList.length})',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+              color: _allClicked ? AppColors.morandiText : AppColors.shark40.withValues(alpha: 0.4),
+            ),
+          ),
         ),
       ),
     );

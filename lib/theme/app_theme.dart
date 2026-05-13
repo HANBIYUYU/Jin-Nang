@@ -6,6 +6,8 @@ class AppTheme {
 
   static ThemeData get lightTheme {
     return ThemeData(
+      fontFamily: 'Inter',
+      fontFamilyFallback: const ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.brandPurple,
         primary: AppColors.brandPurple,

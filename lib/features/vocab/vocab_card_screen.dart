@@ -121,6 +121,8 @@ class _VocabCardScreenState extends State<VocabCardScreen> {
                         _buildRelatedWords(),
                       ],
                       const SizedBox(height: 24),
+                      _buildPracticeButton(context),
+                      const SizedBox(height: 24),
                       _buildNavigationButtons(),
                       const SizedBox(height: 48),
                     ],
@@ -570,6 +572,38 @@ class _VocabCardScreenState extends State<VocabCardScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPracticeButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.go('/toolbox/dialogue-practice'),
+      child: Container(
+        width: double.infinity,
+        height: 56,
+        decoration: BoxDecoration(
+          color: AppColors.straw14,
+          border: Border.all(color: AppColors.morandiText, width: 2.5),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.morandiText,
+              offset: Offset(3, 3),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: const Center(
+          child: Text(
+            '开始对话练习 →',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: AppColors.morandiText,
+            ),
+          ),
+        ),
       ),
     );
   }

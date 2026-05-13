@@ -90,23 +90,23 @@ class MainShell extends StatelessWidget {
             children: [
               // 固定外层尺寸，防止 icon 大小变化引发布局抖动
               SizedBox(
-                width: 56,
-                height: 56,
+                width: 48,
+                height: 48,
                 child: Center(
                   child: Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: isSelected ? selectedColor : Colors.white,
                       border: Border.all(
                         color: AppColors.morandiText,
-                        width: 3,
+                        width: 2.5,
                       ),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(14),
                       boxShadow: isSelected
-                          ? [
+                          ? const [
                               BoxShadow(
                                 color: AppColors.morandiText,
-                                offset: const Offset(4, 4),
+                                offset: Offset(3, 3),
                                 blurRadius: 0,
                               ),
                             ]
@@ -114,17 +114,17 @@ class MainShell extends StatelessWidget {
                     ),
                     child: Icon(
                       icon,
-                      size: 24, // 固定 icon 尺寸，不再随 isSelected 变化
+                      size: 20, // 固定 icon 尺寸，不再随 isSelected 变化
                       color: isSelected ? AppColors.morandiText : AppColors.naturalGray19,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: isSelected ? AppColors.morandiText : AppColors.naturalGray19,
                   letterSpacing: 0,

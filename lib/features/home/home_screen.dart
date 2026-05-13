@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
@@ -288,18 +289,28 @@ Widget _buildStrokedText(String text, TextStyle style) {
         Expanded(
           child: ListView(
             children: [
-              _buildMissionCard(
-                title: 'Vocab\nLearning',
-                subtitle: '50 words',
-                color: AppColors.straw14,
-                icon: Icons.book,
+              Builder(
+                builder: (context) => GestureDetector(
+                  onTap: () => context.go('/toolbox/vocab-learning'),
+                  child: _buildMissionCard(
+                    title: 'Vocab\nLearning',
+                    subtitle: '50 words',
+                    color: AppColors.straw14,
+                    icon: Icons.book,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
-              _buildMissionCard(
-                title: 'Dialogue\nPractice',
-                subtitle: '10 mins',
-                color: AppColors.baliHai30,
-                icon: Icons.chat,
+              Builder(
+                builder: (context) => GestureDetector(
+                  onTap: () => context.go('/toolbox/dialogue-practice'),
+                  child: _buildMissionCard(
+                    title: 'Dialogue\nPractice',
+                    subtitle: '10 mins',
+                    color: AppColors.baliHai30,
+                    icon: Icons.chat,
+                  ),
+                ),
               ),
               const SizedBox(height: 48),
             ],
