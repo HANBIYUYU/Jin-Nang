@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../widgets/title_section.dart';
 
 class ToolboxScreen extends StatelessWidget {
   const ToolboxScreen({super.key});
@@ -16,8 +17,11 @@ class ToolboxScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 69),
-              _buildTitleSection(),
+              const SizedBox(height: 48),
+              const TitleSection(
+                title: 'TOOLBOX',
+                subtitle: 'Useful phrases for real life.',
+              ),
               const SizedBox(height: 40),
               Expanded(
                 child: ListView(
@@ -29,7 +33,7 @@ class ToolboxScreen extends StatelessWidget {
                       color: AppColors.baliHai30,
                       icon: Icons.restaurant,
                       isLocked: false,
-                      onTap: () => context.go('/toolbox/vocab-learning'),
+                      onTap: () => context.go('/toolbox/vocab-card'),
                     ),
                     const SizedBox(height: 24),
                     _buildToolCard(
@@ -57,40 +61,6 @@ class ToolboxScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTitleSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'TOOLBOX',
-          style: TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.w900,
-            color: AppColors.morandiText,
-            height: 37.8 / 36,
-            letterSpacing: -0.9,
-            shadows: const [
-              Shadow(
-                color: AppColors.lavenderPurple,
-                offset: Offset(3, 3),
-                blurRadius: 0,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Useful phrases for real life.',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppColors.morandiText.withValues(alpha: 0.7),
-          ),
-        ),
-      ],
     );
   }
 

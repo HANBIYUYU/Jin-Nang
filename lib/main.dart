@@ -10,8 +10,9 @@ import 'features/auth/register_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/toolbox/toolbox_screen.dart';
 import 'features/profile/profile_screen.dart';
-import 'features/vocab/vocab_learning_screen.dart';
-import 'features/vocab/vocab_card_screen.dart';
+import 'features/home/vocab_learning/vocab_scene_screen.dart';
+import 'features/home/vocab_learning/vocab_learning_screen.dart';
+import 'features/toolbox/toolbox_card.dart';
 import 'features/dialogue/dialogue_practice_screen.dart';
 import 'features/dialogue/level_screen.dart';
 
@@ -58,26 +59,16 @@ final GoRouter _router = GoRouter(
             GoRoute(
               path: '/study',
               builder: (context, state) => const HomeScreen(),
-            ),
-          ],
-        ),
-        // Toolbox Tab
-        StatefulShellBranch(
-          navigatorKey: _shellNavigatorToolboxKey,
-          routes: [
-            GoRoute(
-              path: '/toolbox',
-              builder: (context, state) => const ToolboxScreen(),
               routes: [
-                // 词汇学习场景选择
+                // 场景选择页
+                GoRoute(
+                  path: 'vocab-scene',
+                  builder: (context, state) => const VocabSceneScreen(),
+                ),
+                // 词汇学习页（6张卡片）
                 GoRoute(
                   path: 'vocab-learning',
                   builder: (context, state) => const VocabLearningScreen(),
-                ),
-                // 词汇卡片详情
-                GoRoute(
-                  path: 'vocab-card',
-                  builder: (context, state) => const VocabCardScreen(),
                 ),
                 // 对话练习（关卡列表）
                 GoRoute(
@@ -91,6 +82,23 @@ final GoRouter _router = GoRouter(
                     final levelId = int.parse(state.pathParameters['levelId']!);
                     return LevelScreen(levelId: levelId);
                   },
+                ),
+              ],
+            ),
+          ],
+        ),
+        // Toolbox Tab
+        StatefulShellBranch(
+          navigatorKey: _shellNavigatorToolboxKey,
+          routes: [
+            GoRoute(
+              path: '/toolbox',
+              builder: (context, state) => const ToolboxScreen(),
+              routes: [
+                // 句子页（Toolbox → Restaurant）
+                GoRoute(
+                  path: 'vocab-card',
+                  builder: (context, state) => const ToolboxCard(),
                 ),
               ],
             ),

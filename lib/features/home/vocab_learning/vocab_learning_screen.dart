@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_spacing.dart';
+import 'package:audioplayers/audioplayers.dart';
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_spacing.dart';
 
 // ===================== 词汇数据 =====================
 
@@ -22,7 +23,7 @@ class _VocabItem {
 
 const _vocabList = [
   _VocabItem(chinese: '米饭', pinyin: 'mǐfàn', english: 'cooked rice', audioAsset: 'assets/audio/rice.mp3'),
-  _VocabItem(chinese: '面条', pinyin: 'miàntiáo', english: 'noodles', audioAsset: 'assets/audio/noodles.mp3'),
+  _VocabItem(chinese: '面条', pinyin: 'miàntiáo', english: 'noodles', audioAsset: 'assets/audio/noodle.mp3'),
   _VocabItem(chinese: '水', pinyin: 'shuǐ', english: 'water', audioAsset: 'assets/audio/water.mp3'),
   _VocabItem(chinese: '茶', pinyin: 'chá', english: 'tea', audioAsset: 'assets/audio/tea.mp3'),
   _VocabItem(chinese: '饭店', pinyin: 'fàndiàn', english: 'restaurant', audioAsset: 'assets/audio/restaurant.mp3'),
@@ -41,22 +42,44 @@ class VocabLearningScreen extends StatefulWidget {
 class _VocabLearningScreenState extends State<VocabLearningScreen> {
   final Set<int> _clickedCards = {};
   int _highlightedIndex = -1;
+  bool _isPlaying = false;
+  final AudioPlayer _player = AudioPlayer();
+
   bool get _allClicked => _clickedCards.length >= _vocabList.length;
 
-  void _onCardTap(int index) {
-    if (_highlightedIndex == index) return;
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onCardTap(int index) async {
+    // 防重复点击：同一张卡片在音频播放结束前无效
+    if (_highlightedIndex == index || _isPlaying) return;
+
     setState(() {
       _clickedCards.add(index);
       _highlightedIndex = index;
+      _isPlaying = true;
     });
+
     Timer(const Duration(milliseconds: 200), () {
       if (mounted) setState(() => _highlightedIndex = -1);
     });
-    debugPrint('[Audio] Would play: ${_vocabList[index].audioAsset}');
+
+    final asset = _vocabList[index].audioAsset;
+    try {
+      await _player.stop();
+      await _player.play(AssetSource(asset.replaceFirst('assets/', '')));
+    } catch (e) {
+      debugPrint('[Audio] Error playing $asset: $e');
+    } finally {
+      if (mounted) setState(() => _isPlaying = false);
+    }
   }
 
-  void _goToVocabCard() => context.go('/toolbox/vocab-card');
-  void _goBack() => context.go('/toolbox');
+  void _goToDialoguePractice() => context.go('/study/dialogue-practice');
+  void _goBack() => context.go('/study/vocab-scene');
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +201,7 @@ class _VocabLearningScreenState extends State<VocabLearningScreen> {
 
   Widget _buildNextButton() {
     return GestureDetector(
-      onTap: _allClicked ? _goToVocabCard : null,
+      onTap: _allClicked ? _goToDialoguePractice : null,
       child: Container(
         width: double.infinity,
         height: 56,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../widgets/title_section.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,7 +17,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 39),
+              const SizedBox(height: 9),
               _buildWelcomeSection(),
               const SizedBox(height: 29),
               _buildStatsCards(),
@@ -41,12 +42,15 @@ class HomeScreen extends StatelessWidget {
             children: [
               _buildBottomBlueCard('Yo! Alex 👋'),
               const SizedBox(height: 9),
-              _buildTitleText(),
+              const TitleSection(
+                title: 'Ready to\nLevel Up?',
+                subtitle: 'Learn Chinese, one scene at a time.',
+              ),
             ],
           ),
         ),
         const SizedBox(width: 16),
-        _buildUserAvatar(),
+        //_buildUserAvatar(),
       ],
     );
   }
@@ -78,56 +82,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-Widget _buildTitleText() {
-  const style = TextStyle(
-    fontSize: 36,
-    fontWeight: FontWeight.w900,
-    fontFamily: 'Arial Black',
-    color: AppColors.morandiText,
-    height: 37.8 / 36,
-    letterSpacing: -0.9,
-  );
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _buildStrokedText('Ready to', style),
-      _buildStrokedText('Level Up?', style),
-    ],
-  );
-}
-
-Widget _buildStrokedText(String text, TextStyle style) {
-  // 带阴影的样式
-  final shadowStyle = style.copyWith(
-    shadows: [
-      const Shadow(
-        color: AppColors.lavenderPurple,
-        offset: Offset(3, 3),
-        blurRadius: 0,
-      ),
-    ],
-  );
-
-  return Stack(
-    children: [
-      // 底层：描边层（不加阴影，避免描边也被偏移）
-      Text(
-        text,
-        style: style.copyWith(
-          foreground: Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 2.0
-            ..color = AppColors.lavenderPurple,
-        ),
-      ),
-      // 顶层：填充层 + 紫色偏移阴影
-      Text(text, style: shadowStyle),
-    ],
-  );
-}
-
-  Widget _buildUserAvatar() {
+  /*Widget _buildUserAvatar() {
     return Container(
       width: 56,
       height: 56,
@@ -143,7 +98,7 @@ Widget _buildStrokedText(String text, TextStyle style) {
         color: AppColors.morandiText,
       ),
     );
-  }
+  }*/
 
   Widget _buildStatsCards() {
     return Row(
@@ -291,7 +246,7 @@ Widget _buildStrokedText(String text, TextStyle style) {
             children: [
               Builder(
                 builder: (context) => GestureDetector(
-                  onTap: () => context.go('/toolbox/vocab-learning'),
+                  onTap: () => context.go('/study/vocab-scene'),
                   child: _buildMissionCard(
                     title: 'Vocab\nLearning',
                     subtitle: '50 words',
@@ -303,7 +258,7 @@ Widget _buildStrokedText(String text, TextStyle style) {
               const SizedBox(height: 16),
               Builder(
                 builder: (context) => GestureDetector(
-                  onTap: () => context.go('/toolbox/dialogue-practice'),
+                  onTap: () => context.go('/study/dialogue-practice'),
                   child: _buildMissionCard(
                     title: 'Dialogue\nPractice',
                     subtitle: '10 mins',

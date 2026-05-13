@@ -222,7 +222,7 @@ class _LevelScreenState extends State<LevelScreen> {
     });
   }
 
-  void _goBack() => context.go('/toolbox/dialogue-practice');
+  void _goBack() => context.go('/study/dialogue-practice');
 
   @override
   Widget build(BuildContext context) {

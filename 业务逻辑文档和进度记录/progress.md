@@ -42,4 +42,73 @@
 
 ---
 
+6. 2026-05-13 21:21 — 提取公共标题组件
+
+   - 新建 `TitleSection`，统一大标题 + 副标题 + 阴影样式
+   - Home / Toolbox 两个页面替换为公共组件，删掉重复代码
+
+---
+
+7. 2026-05-13 21:46 — 修正页面分支结构
+
+   - 新建 `vocab_scene_screen.dart` — 场景选择页（Select a scene）
+   - Home Vocab Learning 卡片 → 场景选择 → Restaurant → 词汇学习（6张卡片）→ 闯关
+   - Toolbox Restaurant 卡片 → 句子页（原 vocab_card），移除闯关入口
+   - 句子页和闯关彻底解耦
+
+---
+
+8. 2026-05-13 22:03 — 重构 vocab 目录结构
+
+   - vocab_learning_screen + vocab_scene_screen → home/vocab_learning/
+   - vocab_card_screen → toolbox/toolbox_card.dart（类名 ToolboxCard）
+   - 修复回退导航：学习页回到场景选择，句子页回到 Toolbox
+   - 删除旧 vocab/ 文件夹
+
+---
+
+9. 2026-05-13 22:14 — 修复 Tab 分支隔离
+
+   - 学习页子路由从 Toolbox Tab 移到 Study Tab
+   - Home / 场景选择 / 词汇学习 / 闯关 全部在 Study 分支内
+   - Toolbox 仅保留句子页
+   - 修复所有页面导航路径
+
+---
+
+10. 2026-05-13 22:28 — 接入音频播放
+
+   - 添加 audioplayers 依赖
+   - 注册 assets/audio/ 资源
+   - 修复 noodle.mp3 文件名不匹配
+   - 词汇卡片点击播放音频，防重复点击，错误静默处理
+
+---
+
+11. 2026-05-13 22:40 — 重写 Toolbox 句子页为 Vocab Battle
+
+   - 标题改为 Vocab Battle，大圆角卡片风格
+   - 数据模型扩展：词性、英/中文释义、拼音、例句、关联词（近义/反义/拓展）、短语
+   - 两张示例词：米饭、饭店
+   - Toggle：关联词 / 短语
+   - 关联词分三类标签色（蓝/红/紫）
+   - 右上角音量按钮播放音频
+   - 底部 Prev / Finish
+
+---
+
+12. 2026-05-13 22:51 — Vocab Battle Finish 回到 Toolbox
+
+   - 最后一页点击 Finish → 回到 Toolbox 页面
+
+---
+
+13. 2026-05-13 22:53 — 统一三页标题高度
+
+   - Home 顶部间距 39 → 9（蓝色小卡片 + 标题对齐 48）
+   - Toolbox 顶部间距 69 → 48
+   - Profile 已是 48，无需调整
+
+---
+
 *（下次更新请在此下方继续追加）*

@@ -108,7 +108,7 @@ class DialoguePracticeScreen extends StatelessWidget {
     return Row(
       children: [
         GestureDetector(
-          onTap: () => context.go('/toolbox/vocab-card'),
+          onTap: () => context.go('/study'),
           child: Container(
             width: 40,
             height: 40,
@@ -233,7 +233,7 @@ class DialoguePracticeScreen extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: level.isUnlocked
-            ? () => context.go('/toolbox/level/${level.id}')
+            ? () => context.go('/study/level/${level.id}')
             : null,
         borderRadius: BorderRadius.circular(16),
         child: Container(
