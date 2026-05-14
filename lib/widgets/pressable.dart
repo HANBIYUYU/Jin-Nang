@@ -24,7 +24,8 @@ class ButtonSounds {
   Future<void> playPressed() async {
     if (_isDisposed) return;
     try {
-      await _audioPlayer.stop();
+      // 修复：移除 stop() 调用，直接播放新音频
+      // 这样多个音频可以同时播放，不会出现 AbortError
       await _audioPlayer.play(AssetSource('audio/btn_pressed.mp3'));
     } catch (e) {
       debugPrint('Failed to play pressed sound: $e');
@@ -35,7 +36,7 @@ class ButtonSounds {
   Future<void> playReleased() async {
     if (_isDisposed) return;
     try {
-      await _audioPlayer.stop();
+      // 修复：移除 stop() 调用，直接播放新音频
       await _audioPlayer.play(AssetSource('audio/btn_released.mp3'));
     } catch (e) {
       debugPrint('Failed to play released sound: $e');
@@ -142,8 +143,9 @@ class _PressableState extends State<Pressable> {
   }
 
   Future<void> _playSound(bool isPressed, int pressId) async {
+    if (_isDisposed) return;
     try {
-      await ButtonSounds.instance._audioPlayer.stop();
+      // 修复：移除 stop() 调用，直接播放
       if (pressId == _pressId) {
         await ButtonSounds.instance._audioPlayer.play(
           AssetSource(isPressed ? 'audio/btn_pressed.mp3' : 'audio/btn_released.mp3'),

@@ -42,10 +42,6 @@ class MainShell extends StatelessWidget {
       height: 92,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
-        ),
         border: Border(
           top: BorderSide(color: Colors.black, width: 4),
         ),
@@ -87,79 +83,113 @@ class MainShell extends StatelessWidget {
           );
         },
         child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 52,
-                height: 52,
-                child: Center(
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween<double>(
-                      begin: isSelected ? 0 : 0.12,
-                      end: isSelected ? 0.12 : 0,
-                    ),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOutBack,
-                    builder: (context, angle, child) {
-                      return Transform.rotate(
-                        angle: angle,
-                        alignment: Alignment.center,
-                        child: Container(
-                          width: 44,
-                          height: 44,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Transform.translate(
+              offset: const Offset(0, -15),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(
+                  begin: isSelected ? 0 : -0.06,
+                  end: isSelected ? -0.06 : 0,
+                ),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOutBack,
+                builder: (context, angle, child) {
+                  return Transform.rotate(
+                    angle: angle,
+                    alignment: Alignment.center,
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(
+                        begin: isSelected ? 56 : 65,
+                        end: isSelected ? 65 : 56,
+                      ),
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOutBack,
+                      builder: (context, size, child) {
+                        return Container(
+                          width: size,
+                          height: size,
                           decoration: BoxDecoration(
-                            color: isSelected ? data.selectedColor : Colors.white,
+                            color: isSelected
+                                ? data.selectedColor
+                                : Colors.white,
                             border: Border.all(
                               color: AppColors.morandiText,
                               width: 2.5,
                             ),
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: isSelected
-                                ? const [
-                                    BoxShadow(
-                                      color: AppColors.morandiText,
-                                      offset: Offset(3, 3),
-                                      blurRadius: 0,
-                                    ),
-                                  ]
-                                : null,
+                            borderRadius: BorderRadius.circular(
+                              isSelected ? 14 : 12,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: AppColors.morandiText,
+                                offset: Offset(4, 4),
+                                blurRadius: 0,
+                              ),
+                            ],
                           ),
                           child: Center(
-                            child: Image.asset(
-                              data.iconPath,
-                              width: 22,
-                              height: 22,
-                              color: isSelected
-                                  ? AppColors.morandiText
-                                  : AppColors.naturalGray19,
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween<double>(
+                                begin: isSelected ? 22 : 28,
+                                end: isSelected ? 28 : 22,
+                              ),
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOutBack,
+                              builder: (context, iconSize, child) {
+                                return Image.asset(
+                                  data.iconPath,
+                                  width: iconSize,
+                                  height: iconSize,
+                                  color: isSelected
+                                      ? AppColors.morandiText
+                                      : AppColors.naturalGray19,
+                                );
+                              },
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
-              const SizedBox(height: 2),
-              Text(
-                data.label,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
-                  color: isSelected
-                      ? AppColors.morandiText
-                      : AppColors.naturalGray19,
-                  letterSpacing: 0.5,
+            ),
+            Transform.translate(
+              offset: const Offset(0, -8),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(
+                  begin: isSelected ? 0 : -0.06,
+                  end: isSelected ? -0.06 : 0,
                 ),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOutBack,
+                builder: (context, angle, child) {
+                  return Transform.rotate(
+                    angle: angle,
+                    alignment: Alignment.center,
+                    child: Text(
+                      data.label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        color: isSelected
+                            ? AppColors.morandiText
+                            : AppColors.naturalGray19,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }
-
 
 class _NavItemData {
   final String iconPath;

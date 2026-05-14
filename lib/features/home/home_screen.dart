@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 9),
               const TitleSection(
                 title: 'Ready to\nLevel Up?',
-                subtitle: 'Learn Chinese, one scene at a time.',
+                subtitle: '',  //先放着吧
               ),
             ],
           ),
