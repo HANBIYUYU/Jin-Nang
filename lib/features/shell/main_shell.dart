@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../widgets/pressable.dart';
 
 class MainShell extends StatelessWidget {
   const MainShell({
@@ -77,17 +78,15 @@ class MainShell extends StatelessWidget {
     final isSelected = navigationShell.currentIndex == index;
 
     return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            navigationShell.goBranch(
-              index,
-              initialLocation: index == navigationShell.currentIndex,
-            );
-          },
-          child: Column(
+      child: Pressable(
+        feedback: PressFeedback.defaultFeedback,
+        onPressed: () {
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
+        },
+        child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -157,10 +156,10 @@ class MainShell extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }
+
 
 class _NavItemData {
   final String iconPath;

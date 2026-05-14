@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_spacing.dart';
-import '../../widgets/app_header.dart';
-import '../../widgets/app_safe_area.dart';
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_spacing.dart';
+import '../../../widgets/app_header.dart';
+import '../../../widgets/app_safe_area.dart';
+import '../../../widgets/pressable.dart';
 
 // 关卡数据
 class _LevelInfo {
@@ -184,14 +185,11 @@ class DialoguePracticeScreen extends StatelessWidget {
   }
 
   Widget _buildLevelCard(BuildContext context, _LevelInfo level) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: level.isUnlocked
-            ? () => context.go('/study/level/${level.id}')
-            : null,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
+    return Pressable(
+      onPressed: level.isUnlocked
+          ? () => context.go('/study/level/${level.id}')
+          : null,
+      child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: level.isUnlocked ? level.color : AppColors.whisper15,
@@ -305,7 +303,7 @@ class DialoguePracticeScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
+

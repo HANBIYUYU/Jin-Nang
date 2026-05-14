@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import 'pressable.dart';
 
 /// 页面顶部导航栏：返回按钮 + 标题标签 + 可选进度计数。
 ///
@@ -22,8 +23,8 @@ class AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        GestureDetector(
-          onTap: onBack,
+        Pressable(
+          onPressed: onBack,
           child: Container(
             width: 44,
             height: 44,

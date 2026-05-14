@@ -5,6 +5,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/app_header.dart';
 import '../../widgets/app_safe_area.dart';
+import '../../widgets/pressable.dart';
 
 // ===================== 数据模型 =====================
 
@@ -233,8 +234,8 @@ class _ToolboxCardState extends State<ToolboxCard> {
                   ],
                 ),
               ),
-              GestureDetector(
-                onTap: _playAudio,
+              Pressable(
+                onPressed: _playAudio,
                 child: Container(
                   width: 48,
                   height: 48,
@@ -356,8 +357,8 @@ class _ToolboxCardState extends State<ToolboxCard> {
     return Row(
       children: [
         Expanded(
-          child: GestureDetector(
-            onTap: () => setState(() => _showRelated = true),
+          child: Pressable(
+            onPressed: () => setState(() => _showRelated = true),
             child: Container(
               height: 52,
               decoration: BoxDecoration(
@@ -385,8 +386,8 @@ class _ToolboxCardState extends State<ToolboxCard> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: GestureDetector(
-            onTap: () => setState(() => _showRelated = false),
+          child: Pressable(
+            onPressed: () => setState(() => _showRelated = false),
             child: Container(
               height: 52,
               decoration: BoxDecoration(
@@ -548,8 +549,8 @@ class _ToolboxCardState extends State<ToolboxCard> {
     return Row(
       children: [
         Expanded(
-          child: GestureDetector(
-            onTap: isFirst ? null : _goPrev,
+          child: Pressable(
+            onPressed: isFirst ? null : _goPrev,
             child: Container(
               height: 52,
               decoration: BoxDecoration(
@@ -578,8 +579,8 @@ class _ToolboxCardState extends State<ToolboxCard> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: GestureDetector(
-            onTap: _goNext,
+          child: Pressable(
+            onPressed: _goNext,
             child: Container(
               height: 52,
               decoration: BoxDecoration(

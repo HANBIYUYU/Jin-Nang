@@ -6,6 +6,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/app_safe_area.dart';
+import '../../../widgets/pressable.dart';
 
 // ===================== 词汇数据 =====================
 
@@ -139,8 +140,8 @@ class _VocabLearningScreenState extends State<VocabLearningScreen> {
     final isHighlighted = _highlightedIndex == index;
     final hasClicked = _clickedCards.contains(index);
 
-    return GestureDetector(
-      onTap: () => _onCardTap(index),
+    return Pressable(
+      onPressed: () => _onCardTap(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         curve: Curves.easeOut,
@@ -174,8 +175,8 @@ class _VocabLearningScreenState extends State<VocabLearningScreen> {
   }
 
   Widget _buildNextButton() {
-    return GestureDetector(
-      onTap: _allClicked ? _goToDialoguePractice : null,
+    return Pressable(
+      onPressed: _allClicked ? _goToDialoguePractice : null,
       child: Container(
         width: double.infinity,
         height: 56,

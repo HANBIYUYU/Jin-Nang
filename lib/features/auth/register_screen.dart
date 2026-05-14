@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/app_safe_area.dart';
+import '../../widgets/pressable.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -96,8 +97,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildBackButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.go('/login'),
+    return Pressable(
+      onPressed: () => context.go('/login'),
       child: Container(
         width: 44,
         height: 44,
@@ -190,8 +191,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildRegisterButton() {
-    return GestureDetector(
-      onTap: _register,
+    return Pressable(
+      onPressed: _register,
       child: Container(
         width: double.infinity,
         height: 56,
@@ -233,8 +234,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             color: AppColors.morandiText.withValues(alpha: 0.6),
           ),
         ),
-        GestureDetector(
-          onTap: () => context.go('/login'),
+        Pressable(
+          onPressed: () => context.go('/login'),
           child: const Text(
             'Sign In',
             style: TextStyle(

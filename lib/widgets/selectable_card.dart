@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import 'pressable.dart';
 
 /// 可点击的场景/工具卡片，支持锁定状态。
 ///
@@ -28,8 +29,8 @@ class SelectableCard extends StatelessWidget {
     final cardBg = Colors.white;
     final iconBg = color;
 
-    final card = GestureDetector(
-      onTap: onTap,
+    final card = Pressable(
+      onPressed: onTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20),

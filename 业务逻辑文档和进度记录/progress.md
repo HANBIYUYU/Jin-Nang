@@ -1,6 +1,6 @@
 # 锦囊开发进度日记
 
-> 每次更新后追加，格式：`序号. 日期 时间 — 内容`
+> 每次更新后追加，格式：`序号. 日期 时间 — 内容` 简明直接
 
 ---
 
@@ -194,42 +194,48 @@
 
 ---
 
-22. 2026-05-14 08:41 — 修复 streak 卡片字体回退问题
+22. 2026-05-14 08:41 — 修复 streak 字体回退
 
-   - 根因：`RichText` 的 `TextSpan` 不继承 `ThemeData` 的 `fontFamily`
-   - CanvasKit 将其视为未指定字体，触发 Google Fonts 自动下载
-   - 在 `TextSpan` 最外层显式指定 `fontFamily: AppFonts.english, fontFamilyFallback: [AppFonts.chinese]`
-   - 0 lint 错误
+   - `TextSpan` 不继承 ThemeData 字体，显式指定 fontFamily
 
 ---
 
-23. 2026-05-14 08:45 — 统一增加页面顶部安全间距
+23. 2026-05-14 08:45 — 统一顶部安全间距
 
-   - 新建 `AppSafeArea` 组件：在 `SafeArea` 基础上额外加 `top: 12`
-   - 所有 10 个页面统一替换 `SafeArea` → `AppSafeArea`
-   - 0 lint 错误
+   - 新建 `AppSafeArea`，10 个页面统一替换
 
 ---
 
-24. 2026-05-14 08:53 — 统一页面顶部留白和返回键样式
+24. 2026-05-14 08:53 — 统一顶部留白和返回键样式
 
-   - 非 Study 首页的所有页面顶部留白统一为 48dp
-   - `vocab_learning_screen`：留白 39→48，`_buildHeader()` 改为 `AppHeader`
-   - `vocab_scene_screen`、`dialogue_practice_screen`、`toolbox_card`：留白 24→48
-   - `level_screen`：question 留白 16→48，result 新增留白 48
-   - `login_screen`：留白 60→48
-   - 返回键统一：44×44、白色背景、2.5 粗边框、圆角 12、硬阴影
-   - `level_screen` 和 `register_screen` 的返回键样式对齐
-   - 0 lint 错误
+   - 所有页面顶部留白 48dp，返回键统一 44×44 粗边框硬阴影
 
 ---
 
-25. 2026-05-14 09:01 — 添加卡片式右滑转场动画
+25. 2026-05-14 09:01 — 卡片式右滑转场动画
 
-   - 新增 `_slidePage<T>()` helper：`CustomTransitionPage` + `SlideTransition`
-   - 5 个子页面套用：vocab-scene、vocab-learning、dialogue-practice、level、vocab-card
-   - Tab 根页面和全屏页面保持默认无动画
-   - 0 lint 错误
+   - `_slidePage` helper，5 个子页面套用
+
+---
+
+26. 2026-05-14 16:34 — 统一按钮按下效果 + 音效
+
+   - 新建 `Pressable` 组件，全项目替换 GestureDetector / InkWell
+
+---
+
+27. 2026-05-14 16:50 — 重写 Pressable 组件
+
+   - `ValueNotifier` 替代 `setState`，彻底解决销毁时崩溃
+   - 新增 `PressFeedback` 配置类、触觉反馈、长按支持、`_pressId` 防竞态
+   - `ButtonSounds` 改为单例，支持资源释放
+
+---
+
+28. 2026-05-14 17:31 — dialogue 文件夹移入 home
+
+   - `features/dialogue/` → `features/home/dialogue/`
+   - 更新 `main.dart` import 路径，0 lint 错误
 
 ---
 

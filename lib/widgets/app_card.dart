@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import 'pressable.dart';
 
 /// 粗边框 + 硬阴影卡片容器。
 ///
@@ -48,13 +49,9 @@ class AppCard extends StatelessWidget {
     );
 
     if (onTap != null) {
-      return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(borderRadius ?? 16),
-          child: card,
-        ),
+      return Pressable(
+        onPressed: onTap,
+        child: card,
       );
     }
 

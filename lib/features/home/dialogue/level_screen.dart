@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_spacing.dart';
-import '../../widgets/app_safe_area.dart';
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_spacing.dart';
+import '../../../widgets/app_safe_area.dart';
+import '../../../widgets/pressable.dart';
 
 // ===================== 关卡数据模型 =====================
 
@@ -279,8 +280,8 @@ class _LevelScreenState extends State<LevelScreen> {
   Widget _buildTopBar() {
     return Row(
       children: [
-        GestureDetector(
-          onTap: _goBack,
+        Pressable(
+          onPressed: _goBack,
           child: Container(
             width: 44,
             height: 44,
@@ -425,8 +426,8 @@ class _LevelScreenState extends State<LevelScreen> {
       }
     }
 
-    return GestureDetector(
-      onTap: () => _selectOption(index),
+    return Pressable(
+      onPressed: () => _selectOption(index),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
@@ -547,8 +548,8 @@ class _LevelScreenState extends State<LevelScreen> {
   }
 
   Widget _buildNextButton() {
-    return GestureDetector(
-      onTap: _nextQuestion,
+    return Pressable(
+      onPressed: _nextQuestion,
       child: Container(
         width: double.infinity,
         height: 56,
@@ -675,8 +676,8 @@ class _LevelScreenState extends State<LevelScreen> {
   }
 
   Widget _buildContinueButton() {
-    return GestureDetector(
-      onTap: _goBack,
+    return Pressable(
+      onPressed: _goBack,
       child: Container(
         width: double.infinity,
         height: 56,
@@ -707,8 +708,8 @@ class _LevelScreenState extends State<LevelScreen> {
   }
 
   Widget _buildRetryButton({bool isSecondary = false}) {
-    return GestureDetector(
-      onTap: _retry,
+    return Pressable(
+      onPressed: _retry,
       child: Container(
         width: double.infinity,
         height: 56,

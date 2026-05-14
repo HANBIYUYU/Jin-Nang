@@ -13,8 +13,8 @@ import 'features/profile/profile_screen.dart';
 import 'features/home/vocab_learning/vocab_scene_screen.dart';
 import 'features/home/vocab_learning/vocab_learning_screen.dart';
 import 'features/toolbox/toolbox_card.dart';
-import 'features/dialogue/dialogue_practice_screen.dart';
-import 'features/dialogue/level_screen.dart';
+import 'features/home/dialogue/dialogue_practice_screen.dart';
+import 'features/home/dialogue/level_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

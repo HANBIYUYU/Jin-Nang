@@ -4,6 +4,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_fonts.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/app_safe_area.dart';
+import '../../widgets/pressable.dart';
 import '../../widgets/title_section.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -247,8 +248,8 @@ class HomeScreen extends StatelessWidget {
           child: ListView(
             children: [
               Builder(
-                builder: (context) => GestureDetector(
-                  onTap: () => context.go('/study/vocab-scene'),
+                builder: (context) => Pressable(
+                  onPressed: () => context.go('/study/vocab-scene'),
                   child: _buildMissionCard(
                     title: 'Vocab\nLearning',
                     subtitle: '50 words',
@@ -259,8 +260,8 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Builder(
-                builder: (context) => GestureDetector(
-                  onTap: () => context.go('/study/dialogue-practice'),
+                builder: (context) => Pressable(
+                  onPressed: () => context.go('/study/dialogue-practice'),
                   child: _buildMissionCard(
                     title: 'Dialogue\nPractice',
                     subtitle: '10 mins',
