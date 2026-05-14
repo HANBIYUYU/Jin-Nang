@@ -1,4 +1,6 @@
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
@@ -34,6 +36,7 @@
 
   <title>test1</title>
   <link rel="manifest" href="manifest.json">
+
   <style id="splash-screen-style">
     html {
       height: 100%
@@ -99,9 +102,136 @@
       document.body.style.background = "transparent";
     }
   </script>
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 </head>
 <body>
+
+  <!-- ============================================ -->
+  <!-- 👇 字体下载拦截脚本（Emoji 放行） -->
+  <!-- 必须在 flutter_bootstrap.js 之前加载 -->
+  <!-- ============================================ -->
+  <script>
+    (function() {
+      // 检查 URL 是否应该被拦截
+      function isFontRequest(url) {
+        if (typeof url !== 'string') return false;
+        return url.includes('fonts.gstatic.com') || 
+               url.includes('fonts.googleapis.com') ||
+               url.includes('fonts.google.com');
+      }
+
+      // 检查是否为 Emoji 字体（需要放行）
+      function isEmojiFont(url) {
+        if (typeof url !== 'string') return false;
+        return url.includes('emoji') || 
+               url.includes('Emoji') || 
+               url.includes('NotoColorEmoji');
+      }
+
+      // ========== 拦截 fetch 请求 ==========
+      const originalFetch = window.fetch;
+      window.fetch = function(url, options) {
+        if (isFontRequest(url)) {
+          // Emoji 字体放行
+          if (isEmojiFont(url)) {
+            console.log('[字体拦截] ✅ Emoji 字体放行:', url.substring(0, 100) + '...');
+            return originalFetch.apply(this, arguments);
+          }
+          // 其他字体返回虚假成功响应
+          console.warn('[字体拦截] 🚫 已拦截:', url.substring(0, 100) + '...');
+          return Promise.resolve(new Response(new ArrayBuffer(0), {
+            status: 200,
+            statusText: 'OK',
+            headers: { 'Content-Type': 'application/octet-stream' }
+          }));
+        }
+        return originalFetch.apply(this, arguments);
+      };
+
+      // ========== 拦截 XMLHttpRequest 请求 ==========
+      const originalXHROpen = XMLHttpRequest.prototype.open;
+      const originalXHRSend = XMLHttpRequest.prototype.send;
+
+      XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+        this.__fontBlocked = false;
+        if (isFontRequest(url)) {
+          if (isEmojiFont(url)) {
+            console.log('[字体拦截] ✅ Emoji 字体放行 (XHR):', url.substring(0, 100) + '...');
+            this.__fontBlocked = false;
+          } else {
+            console.warn('[字体拦截] 🚫 已拦截 (XHR):', url.substring(0, 100) + '...');
+            this.__fontBlocked = true;
+          }
+        }
+        return originalXHROpen.apply(this, arguments);
+      };
+
+      XMLHttpRequest.prototype.send = function(body) {
+        if (this.__fontBlocked) {
+          // 模拟异步成功响应
+          setTimeout(() => {
+            Object.defineProperty(this, 'response', { 
+              value: new ArrayBuffer(0), 
+              writable: true 
+            });
+            Object.defineProperty(this, 'responseText', { 
+              value: '', 
+              writable: true 
+            });
+            Object.defineProperty(this, 'readyState', { 
+              value: 4, 
+              writable: true 
+            });
+            Object.defineProperty(this, 'status', { 
+              value: 200, 
+              writable: true 
+            });
+            Object.defineProperty(this, 'statusText', { 
+              value: 'OK', 
+              writable: true 
+            });
+            
+            // 触发事件回调
+            if (this.onreadystatechange) {
+              this.onreadystatechange();
+            }
+            if (this.onload) {
+              this.onload();
+            }
+            if (this.onloadend) {
+              this.onloadend();
+            }
+          }, 0);
+          return;
+        }
+        return originalXHRSend.apply(this, arguments);
+      };
+
+      // ========== 拦截动态创建的 link 标签（CSS 字体加载） ==========
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.tagName === 'LINK' && node.href) {
+              if (isFontRequest(node.href) && !isEmojiFont(node.href)) {
+                console.warn('[字体拦截] 🚫 已移除动态字体 link 标签:', node.href);
+                node.remove();
+              }
+            }
+          });
+        });
+      });
+      
+      observer.observe(document.documentElement, { 
+        childList: true, 
+        subtree: true 
+      });
+
+      console.log('[字体拦截] 🛡️  拦截脚本已就绪');
+      console.log('[字体拦截] 📋 规则: 普通字体 = 拦截 | Emoji 字体 = 放行');
+    })();
+  </script>
+  <!-- ============================================ -->
+
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
@@ -112,5 +242,5 @@
   -->
   <script src="flutter_bootstrap.js" async=""></script>
 
-
-</body></html>
+</body>
+</html>

@@ -171,4 +171,27 @@
 
 ---
 
+---
+
+20. 2026-05-14 07:58 — 全局字体统一为 LXGW 文楷
+
+   - 新增 `app_fonts.dart`：集中管理 `AppFonts.primary` / `AppFonts.secondary`
+   - `AppTheme` 全局 `fontFamily` 改为 `AppFonts.primary`（LXGWWenKai）
+   - pubspec.yaml 注册 LXGWWenKai 三档字重（Light 300 / Regular 400 / Medium 500）
+   - 移除 `fontFamilyFallback` 中的系统字体名，避免网络查找
+   - 0 lint 错误
+
+---
+
+21. 2026-05-14 08:01 — 修复全局字体：英文 Inter + 中文 LXGW 文楷
+
+   - 原因：LXGW 文楷字体文件内部 family name 为 "LXGW WenKai"（带空格），pubspec 写错导致字体全失效
+   - `AppFonts` 拆分：`english = 'Inter'`, `chinese = 'LXGW WenKai'`
+   - `AppTheme`：fontFamily = Inter, fallback = ['LXGW WenKai']，实现英文 Inter、中文 LXGW 自动分发
+   - pubspec.yaml 修正 family name，补充 Inter Medium / SemiBold / Italic
+   - 清理字体文件：从 40+ 个减少到 9 个（Inter 6 + LXGW 3）
+   - 0 lint 错误
+
+---
+
 *（下次更新请在此下方继续追加）*

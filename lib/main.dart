@@ -19,6 +19,7 @@ import 'features/dialogue/level_screen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChannels.textInput.invokeMethod('TextInput.hide');
   runApp(const MyApp());
 }
 
@@ -26,6 +27,27 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorStudyKey = GlobalKey<NavigatorState>(debugLabel: 'study');
 final _shellNavigatorToolboxKey = GlobalKey<NavigatorState>(debugLabel: 'toolbox');
 final _shellNavigatorMeKey = GlobalKey<NavigatorState>(debugLabel: 'me');
+
+/// 卡片式右滑转场（进入时从右侧滑入，返回时向右滑出）
+CustomTransitionPage<T> _slidePage<T>({required Widget child}) {
+  return CustomTransitionPage<T>(
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.easeInOut;
+
+      final tween = Tween(begin: begin, end: end)
+          .chain(CurveTween(curve: curve));
+      final offsetAnimation = animation.drive(tween);
+
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
+}
 
 final GoRouter _router = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -63,24 +85,24 @@ final GoRouter _router = GoRouter(
                 // 场景选择页
                 GoRoute(
                   path: 'vocab-scene',
-                  builder: (context, state) => const VocabSceneScreen(),
+                  pageBuilder: (context, state) => _slidePage(child: const VocabSceneScreen()),
                 ),
                 // 词汇学习页（6张卡片）
                 GoRoute(
                   path: 'vocab-learning',
-                  builder: (context, state) => const VocabLearningScreen(),
+                  pageBuilder: (context, state) => _slidePage(child: const VocabLearningScreen()),
                 ),
                 // 对话练习（关卡列表）
                 GoRoute(
                   path: 'dialogue-practice',
-                  builder: (context, state) => const DialoguePracticeScreen(),
+                  pageBuilder: (context, state) => _slidePage(child: const DialoguePracticeScreen()),
                 ),
                 // 具体关卡（带参数）
                 GoRoute(
                   path: 'level/:levelId',
-                  builder: (context, state) {
+                  pageBuilder: (context, state) {
                     final levelId = int.parse(state.pathParameters['levelId']!);
-                    return LevelScreen(levelId: levelId);
+                    return _slidePage(child: LevelScreen(levelId: levelId));
                   },
                 ),
               ],
@@ -98,7 +120,7 @@ final GoRouter _router = GoRouter(
                 // 句子页（Toolbox → Restaurant）
                 GoRoute(
                   path: 'vocab-card',
-                  builder: (context, state) => const ToolboxCard(),
+                  pageBuilder: (context, state) => _slidePage(child: const ToolboxCard()),
                 ),
               ],
             ),

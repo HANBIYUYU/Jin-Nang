@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_fonts.dart';
 import '../../theme/app_spacing.dart';
+import '../../widgets/app_safe_area.dart';
 import '../../widgets/title_section.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -11,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.springWood14,
-      child: SafeArea(
+      child: AppSafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
@@ -141,6 +143,10 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 5),
           RichText(
             text: const TextSpan(
+              style: TextStyle(
+                fontFamily: AppFonts.english,
+                fontFamilyFallback: [AppFonts.chinese],
+              ),
               children: [
                 TextSpan(
                   text: '12 ',

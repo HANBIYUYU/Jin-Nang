@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
+import '../../../widgets/app_header.dart';
+import '../../../widgets/app_safe_area.dart';
 
 // ===================== 词汇数据 =====================
 
@@ -85,13 +87,17 @@ class _VocabLearningScreenState extends State<VocabLearningScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.springWood14,
-      body: SafeArea(
+      body: AppSafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             children: [
-              const SizedBox(height: 39),
-              _buildHeader(),
+              const SizedBox(height: 48),
+              AppHeader(
+                title: 'Vocab Learning',
+                titleColor: AppColors.baliHai30,
+                onBack: _goBack,
+              ),
               const SizedBox(height: 24),
               _buildTitle(),
               const SizedBox(height: 24),
@@ -111,38 +117,6 @@ class _VocabLearningScreenState extends State<VocabLearningScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: _goBack,
-          child: Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.baliHai30,
-              border: Border.all(color: AppColors.morandiText, width: 2.389),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.arrow_back, size: 20, color: AppColors.morandiText),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.baliHai30,
-              border: Border.all(color: AppColors.morandiText, width: 2.389),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(4, 4), blurRadius: 0)],
-            ),
-            child: const Text('Vocab Learning', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
-          ),
-        ),
-      ],
     );
   }
 

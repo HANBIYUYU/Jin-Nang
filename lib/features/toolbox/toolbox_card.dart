@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/app_header.dart';
+import '../../widgets/app_safe_area.dart';
 
 // ===================== 数据模型 =====================
 
@@ -160,12 +161,12 @@ class _ToolboxCardState extends State<ToolboxCard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.springWood14,
-      body: SafeArea(
+      body: AppSafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 48),
               AppHeader(
                 title: 'Vocab Battle',
                 progress: '${_currentIndex + 1}/$_total',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../widgets/app_safe_area.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -33,7 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
+      body: AppSafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
@@ -98,16 +99,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return GestureDetector(
       onTap: () => context.go('/login'),
       child: Container(
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
-          color: AppColors.whisper15,
-          border: Border.all(color: AppColors.morandiText, width: 2),
+          color: Colors.white,
+          border: Border.all(color: AppColors.morandiText, width: 2.5),
           borderRadius: BorderRadius.circular(12),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.morandiText,
+              offset: Offset(3, 3),
+              blurRadius: 0,
+            ),
+          ],
         ),
         child: const Icon(
           Icons.arrow_back,
-          size: 20,
           color: AppColors.morandiText,
         ),
       ),

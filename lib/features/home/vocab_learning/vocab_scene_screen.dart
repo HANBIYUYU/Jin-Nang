@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../widgets/app_header.dart';
+import '../../../widgets/app_safe_area.dart';
 import '../../../widgets/selectable_card.dart';
 
 /// 词汇学习 —— 场景选择页（Select a scene）
@@ -16,13 +17,13 @@ class VocabSceneScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.springWood14,
-      body: SafeArea(
+      body: AppSafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 48),
               AppHeader(
                 title: 'Vocab Learning',
                 titleColor: AppColors.straw14,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../widgets/app_safe_area.dart';
 
 // ===================== 关卡数据模型 =====================
 
@@ -235,12 +236,12 @@ class _LevelScreenState extends State<LevelScreen> {
   Widget _buildQuestionView() {
     return Scaffold(
       backgroundColor: AppColors.springWood14,
-      body: SafeArea(
+      body: AppSafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             children: [
-              const SizedBox(height: 16),
+              const SizedBox(height: 48),
               _buildTopBar(),
               const SizedBox(height: 24),
               _buildProgressBar(),
@@ -281,16 +282,22 @@ class _LevelScreenState extends State<LevelScreen> {
         GestureDetector(
           onTap: _goBack,
           child: Container(
-            width: 40,
-            height: 40,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              color: AppColors.whisper15,
-              border: Border.all(color: AppColors.morandiText, width: 2),
+              color: Colors.white,
+              border: Border.all(color: AppColors.morandiText, width: 2.5),
               borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(
+                  color: AppColors.morandiText,
+                  offset: Offset(3, 3),
+                  blurRadius: 0,
+                ),
+              ],
             ),
             child: const Icon(
               Icons.close,
-              size: 20,
               color: AppColors.morandiText,
             ),
           ),
@@ -578,12 +585,13 @@ class _LevelScreenState extends State<LevelScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.springWood14,
-      body: SafeArea(
+      body: AppSafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 48),
               const Spacer(),
               _buildResultIcon(),
               const SizedBox(height: 24),

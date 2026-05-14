@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_fonts.dart';
 
 class AppTheme {
   AppTheme._();
 
   static ThemeData get lightTheme {
     return ThemeData(
-      fontFamily: 'Inter',
-      fontFamilyFallback: const ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+      fontFamily: AppFonts.english,
+      fontFamilyFallback: const [AppFonts.chinese],
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.brandPurple,
         primary: AppColors.brandPurple,
