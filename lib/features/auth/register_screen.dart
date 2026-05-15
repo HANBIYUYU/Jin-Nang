@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
+import '../../core/di.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/app_safe_area.dart';
@@ -17,6 +19,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   bool _obscure = true;
+  bool _loading = false;
+  String? _error;
 
   @override
   void dispose() {
@@ -26,69 +30,63 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _register() {
-    // Demo: 直接跳转
-    context.go('/study');
+  Future<void> _register() async {
+    if (_loading) return;
+    setState(() { _loading = true; _error = null; });
+    try {
+      final token = await Di.api.register(
+          _emailCtrl.text.trim(), _passwordCtrl.text, _nameCtrl.text.trim());
+      await Di.tokenStore.saveToken(token);
+      if (mounted) context.go('/study');
+    } on DioException catch (e) {
+      setState(() => _error = e.response?.data?['error'] as String? ?? 'Registration failed');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.springWood14,
       body: AppSafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 48),
-              _buildBackButton(context),
-              const SizedBox(height: 24),
-              const Text(
-                'Create Account',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.morandiText,
-                ),
-              ),
+              const SizedBox(height: 64),
+              const Text('Create\nAccount',
+                  style: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: AppColors.morandiText, height: 1.1)),
               const SizedBox(height: 8),
-              Text(
-                'Start your Chinese learning journey',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.morandiText.withValues(alpha: 0.6),
-                ),
-              ),
-              const SizedBox(height: 40),
-              _buildInputField(
-                label: 'Name',
-                hint: 'Alex Walker',
-                controller: _nameCtrl,
-                icon: Icons.person_outline,
-              ),
-              const SizedBox(height: 20),
-              _buildInputField(
-                label: 'Email',
-                hint: 'alex@example.com',
-                controller: _emailCtrl,
-                icon: Icons.email_outlined,
-              ),
-              const SizedBox(height: 20),
-              _buildInputField(
-                label: 'Password',
-                hint: '••••••••',
-                controller: _passwordCtrl,
-                icon: Icons.lock_outline,
-                obscure: _obscure,
-                onToggleObscure: () => setState(() => _obscure = !_obscure),
-              ),
+              Text('Start your Chinese learning journey.',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
+                      color: AppColors.morandiText.withValues(alpha: 0.6))),
+              const SizedBox(height: 48),
+              _buildField('Name', _nameCtrl),
+              const SizedBox(height: 16),
+              _buildField('Email', _emailCtrl, keyboardType: TextInputType.emailAddress),
+              const SizedBox(height: 16),
+              _buildField('Password', _passwordCtrl, obscure: true),
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(_error!, style: const TextStyle(color: AppColors.semanticRed, fontWeight: FontWeight.w600)),
+              ],
               const SizedBox(height: 32),
-              _buildRegisterButton(),
-              const SizedBox(height: 24),
-              _buildLoginLink(),
-              const SizedBox(height: 24),
+              Pressable(
+                onPressed: _loading ? null : _register,
+                child: _buildButton(_loading ? 'Creating...' : 'Create Account', AppColors.lavenderPurple),
+              ),
+              const SizedBox(height: 16),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text('Already have an account? ',
+                    style: TextStyle(color: AppColors.morandiText.withValues(alpha: 0.6), fontWeight: FontWeight.w600)),
+                Pressable(
+                  onPressed: () => context.go('/login'),
+                  child: const Text('Sign In',
+                      style: TextStyle(color: AppColors.lavenderPurple, fontWeight: FontWeight.w900)),
+                ),
+              ]),
             ],
           ),
         ),
@@ -96,157 +94,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildBackButton(BuildContext context) {
-    return Pressable(
-      onPressed: () => context.go('/login'),
-      child: Container(
-        width: 44,
-        height: 44,
+  Widget _buildField(String label, TextEditingController ctrl,
+      {bool obscure = false, TextInputType? keyboardType}) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
+      const SizedBox(height: 6),
+      Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: AppColors.morandiText, width: 2.5),
+          border: Border.all(color: AppColors.morandiText, width: 2),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.morandiText,
-              offset: Offset(3, 3),
-              blurRadius: 0,
-            ),
-          ],
+          boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(3, 3), blurRadius: 0)],
         ),
-        child: const Icon(
-          Icons.arrow_back,
-          color: AppColors.morandiText,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputField({
-    required String label,
-    required String hint,
-    required TextEditingController controller,
-    required IconData icon,
-    bool obscure = false,
-    VoidCallback? onToggleObscure,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            color: AppColors.morandiText,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: AppColors.morandiText, width: 2),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.morandiText,
-                offset: Offset(3, 3),
-                blurRadius: 0,
-              ),
-            ],
-          ),
-          child: TextField(
-            controller: controller,
-            obscureText: obscure,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: AppColors.morandiText,
-            ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: AppColors.morandiText.withValues(alpha: 0.4),
-              ),
-              prefixIcon: Icon(icon, color: AppColors.morandiText, size: 20),
-              suffixIcon: onToggleObscure != null
-                  ? IconButton(
-                      icon: Icon(
-                        obscure ? Icons.visibility_off : Icons.visibility,
-                        color: AppColors.morandiText,
-                        size: 20,
-                      ),
-                      onPressed: onToggleObscure,
-                    )
-                  : null,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRegisterButton() {
-    return Pressable(
-      onPressed: _register,
-      child: Container(
-        width: double.infinity,
-        height: 56,
-        decoration: BoxDecoration(
-          color: AppColors.straw14,
-          border: Border.all(color: AppColors.morandiText, width: 2.5),
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.morandiText,
-              offset: Offset(4, 4),
-              blurRadius: 0,
-            ),
-          ],
-        ),
-        child: const Center(
-          child: Text(
-            'Create Account',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              color: AppColors.morandiText,
-            ),
+        child: TextField(
+          controller: ctrl,
+          obscureText: obscure ? _obscure : false,
+          keyboardType: keyboardType,
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.morandiText),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: InputBorder.none,
+            suffixIcon: obscure
+                ? IconButton(
+                    icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility,
+                        color: AppColors.naturalGray19),
+                    onPressed: () => setState(() => _obscure = !_obscure),
+                  )
+                : null,
           ),
         ),
       ),
-    );
+    ]);
   }
 
-  Widget _buildLoginLink() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Already have an account? ',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppColors.morandiText.withValues(alpha: 0.6),
-          ),
-        ),
-        Pressable(
-          onPressed: () => context.go('/login'),
-          child: const Text(
-            'Sign In',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: AppColors.baliHai30,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ),
-      ],
+  Widget _buildButton(String label, Color color) {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        color: color,
+        border: Border.all(color: AppColors.morandiText, width: 2.5),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(3, 3), blurRadius: 0)],
+      ),
+      child: Center(
+        child: Text(label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
+      ),
     );
   }
 }

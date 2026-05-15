@@ -246,4 +246,18 @@
 
 ---
 
+30. 2026-05-15 — 确立前后端分离架构
+
+   - 后端选型：Cloudflare Workers（Hono）+ D1（SQLite）+ R2（对象存储）
+   - 放弃 SharedPreferences 本地持久化，数据全部走后端
+   - 明确前后端数据边界：
+     - 打包进 App：按钮音效、字体、UI 图标
+     - 走后端：用户数据、场景/词汇/关卡内容、用户进度、词汇音频
+   - 音频策略：词汇音频存 R2，flutter_cache_manager 管理本地缓存，首次播放下载，后续离线可用
+   - 定义 API 路由（/auth、/scenes、/vocab、/levels、/user/progress）
+   - 规划 Flutter 目标目录结构（core/network、core/audio、features/*/data）
+   - 更新 business_logic.md v1.2、CLAUDE.md
+
+---
+
 *（下次更新请在此下方继续追加）*

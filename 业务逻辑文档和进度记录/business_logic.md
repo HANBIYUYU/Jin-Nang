@@ -360,38 +360,170 @@ assets/audio/
 
 ## 9. 技术栈
 
+### 前端（Flutter）
+
 - **框架**：Flutter 3.x
-- **状态管理**：StatefulWidget + setState（初期）
+- **状态管理**：StatefulWidget + setState（初期，待迁移到 Riverpod/BLoC）
 - **路由**：go_router（StatefulShellRoute.indexedStack）
 - **UI 风格**：粗黑边框 + 硬阴影 + 莫兰迪色系 + 大圆角
-- **字体**：Inter（本地加载，Regular/Medium/SemiBold/Bold）
+- **字体**：Inter（英文）+ LXGW WenKai（中文），均本地打包
 - **图标**：本地 PNG（assets/icon/）
-- **音频**：audioplayers（已接入）
-- **存储**：SharedPreferences（预留）
+- **音频播放**：audioplayers
+- **音频缓存**：flutter_cache_manager（词汇音频按需下载后缓存）
+- **网络**：待接入（Dio 或 http）
+- **本地存储**：不做本地持久化，数据全部走后端
 
-## 10. 目录结构
+### 后端（Cloudflare）
+
+- **运行时**：Cloudflare Workers（HTTP/HTTPS/WebSocket，Hono 框架）
+- **数据库**：Cloudflare D1（SQLite，Workers 原生 binding）
+- **对象存储**：Cloudflare R2（词汇音频文件）
+- **缓存层**：Cloudflare KV（可选，热点词库缓存）
+- **认证**：JWT，由 Workers 签发和校验
+
+---
+
+## 10. 前后端数据划分
+
+### 打包在 App 包体内（静态资源）
+
+```
+assets/
+├── audio/
+│   ├── btn_pressed.mp3     # 按钮按下音效（App 行为，非业务内容）
+│   └── btn_released.mp3    # 按钮释放音效
+├── fonts/                  # Inter + LXGW WenKai
+└── icon/                   # UI 图标
+```
+
+### 存储在后端（业务内容）
+
+| 数据类型 | 来源 | 说明 |
+|----------|------|------|
+| 用户信息 | `GET /auth/me` | display_name, streak, rank, 统计 |
+| 场景列表 | `GET /scenes` | id, 名称, 颜色, 默认解锁状态 |
+| 词汇列表 | `GET /scenes/:id/vocab` | 学习卡所需字段（精简） |
+| 词汇详情 | `GET /vocab/:id` | Vocab Battle 所需（含例句/关联词/短语） |
+| 关卡定义 | `GET /scenes/:id/levels` | 关卡元信息 + 题目数据 |
+| 用户进度 | `GET /user/progress` | 各关卡星级 + 解锁状态 |
+| 词汇音频 | CF R2，路径存于 `audio_key` 字段 | 首次播放时下载，缓存到本地 |
+
+---
+
+## 11. 后端 API 路由
+
+```
+POST /auth/register           注册
+POST /auth/login              登录，返回 JWT
+GET  /auth/me                 当前用户信息 + 统计
+
+GET  /scenes                  场景列表
+GET  /scenes/:id/vocab        场景词汇（学习卡，精简版）
+GET  /vocab/:id               词汇详情（Vocab Battle，含扩展数据）
+
+GET  /scenes/:id/levels       关卡列表 + 题目
+GET  /user/progress           当前用户全部关卡进度
+POST /user/progress           提交关卡结果（stars, score）
+```
+
+所有需要鉴权的接口均携带 `Authorization: Bearer <jwt>`。
+
+---
+
+## 12. 音频系统
+
+### 分类
+
+| 类别 | 存储位置 | 播放方式 |
+|------|----------|----------|
+| 按钮音效（btn_pressed / btn_released） | App 包体 | `AssetSource`，直接播放 |
+| 词汇音频（全部业务音频） | CF R2 | 下载后缓存，`DeviceFileSource` 播放 |
+
+### 词汇音频缓存流程
+
+```
+App 收到词汇数据（含 audio_key: "restaurant/rice.mp3"）
+    │
+    ▼
+进入 VocabSceneScreen 后后台预加载该场景全部词汇音频
+    │
+    ├── 检查本地缓存（flutter_cache_manager）
+    │       命中 → 直接使用缓存文件
+    │       未命中 → GET /audio/restaurant/rice.mp3 下载并缓存
+    │
+    ▼
+用户点击词卡 → DeviceFileSource(cachedFilePath) → 立即播放
+```
+
+### R2 路径规范
+
+```
+audio/
+├── {scene_name}/
+│   ├── {word}.mp3
+│   └── ...
+└── ...
+```
+
+DB 中 `audio_key` 只存相对路径（如 `restaurant/rice.mp3`），完整 URL 由 Workers 在响应时拼接。
+
+---
+
+## 13. 目录结构（目标架构）
+
+当前前端缺少数据层和逻辑层，待接入后端时补全：
 
 ```
 lib/
-├── main.dart                 # 入口 + 路由表
+├── main.dart
 ├── theme/
-│   ├── app_theme.dart        # 全局 ThemeData
-│   ├── app_colors.dart       # 莫兰迪色值
-│   └── app_spacing.dart      # 间距常量
-├── widgets/                  # 公共组件
-│   ├── app_card.dart
-│   ├── app_header.dart
-│   ├── icon_container.dart
-│   └── selectable_card.dart
+├── widgets/
+├── core/                         # 待建
+│   ├── network/                  # HTTP Client（Dio）+ 拦截器（JWT 注入）
+│   ├── audio/                    # 音频缓存管理（flutter_cache_manager 封装）
+│   └── auth/                     # JWT 存储 + 刷新逻辑
 └── features/
-    ├── auth/                 # 启动 + 登录 + 注册
-    ├── shell/                # 底部导航栏
-    ├── home/                 # 首页
-    │   └── vocab_learning/   # 场景选择 + 词汇学习
-    ├── toolbox/              # 工具箱 + Vocab Battle
-    ├── dialogue/             # 对话练习 + 关卡
-    └── profile/              # 个人资料
+    ├── auth/
+    │   ├── data/                  # 待建：AuthRepository + API 调用
+    │   └── *_screen.dart
+    ├── shell/
+    ├── home/
+    │   ├── data/                  # 待建：SceneRepository
+    │   ├── vocab_learning/
+    │   │   ├── data/              # 待建：VocabRepository
+    │   │   └── *_screen.dart
+    │   └── dialogue/
+    │       ├── data/              # 待建：LevelRepository + ProgressRepository
+    │       └── *_screen.dart
+    ├── toolbox/
+    │   ├── data/                  # 待建：同 VocabRepository（详情版）
+    │   └── *_screen.dart
+    └── profile/
+        ├── data/                  # 待建：UserRepository
+        └── *_screen.dart
 ```
+
+---
+
+## 7. 未实现功能清单（更新）
+
+| 功能 | 优先级 | 状态 | 说明 |
+|------|--------|------|------|
+| 后端服务搭建（CF Workers + D1） | P0 | ❌ | 路由、DB、R2 |
+| 用户认证（注册/登录/JWT） | P0 | ❌ | Workers 签发，Flutter 存储 |
+| 场景/词汇/关卡数据 API | P0 | ❌ | 替换当前全部硬编码数据 |
+| 词汇音频上传至 R2 | P0 | ❌ | 迁移现有 assets/audio/ |
+| 前端网络层（Dio + JWT 拦截器） | P0 | ❌ | core/network/ |
+| 前端数据层（Repository 各模块） | P0 | ❌ | core/audio/ + features/*/data/ |
+| 用户进度提交与读取 | P1 | ❌ | 关卡星级、解锁状态 |
+| 词汇音频缓存（flutter_cache_manager） | P1 | ❌ | 替换当前 AssetSource |
+| 音频播放 | P0 | ✅ | audioplayers 已接入（按钮音效） |
+| 关卡解锁逻辑 | P1 | ❌ | 由后端进度数据驱动 |
+| 设置功能 | P2 | ❌ | 通知、语言切换 |
+| 排行榜 | P2 | ❌ | |
+| 成就系统 | P2 | ❌ | |
+| 深色模式 | P3 | ❌ | |
+| 多语言支持 | P3 | ❌ | |
 
 ---
 
@@ -399,3 +531,4 @@ lib/
 
 **更新记录：**
 - v1.1 (2026-05-14)：更新路由结构（Study/Toolbox Tab 分离）、新增 VocabSceneScreen、Vocab Battle 数据模型、音频系统接入、公共组件、目录结构
+- v1.2 (2026-05-15)：确立前后端分离架构（CF Workers + D1 + R2）、明确前后端数据划分、定义 API 路由、音频缓存策略、目标目录结构、更新未实现功能清单

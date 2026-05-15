@@ -1,175 +1,26 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/di.dart';
+import '../../../core/models/level.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../widgets/app_safe_area.dart';
 import '../../../widgets/pressable.dart';
 
-// ===================== 关卡数据模型 =====================
-
-class _Question {
-  final String question;
-  final List<String> options;
-  final int correctIndex;
-  final String explanation;
-
-  const _Question({
-    required this.question,
-    required this.options,
-    required this.correctIndex,
-    required this.explanation,
-  });
-}
-
-class _LevelData {
-  final int levelId;
-  final String title;
-  final String subtitle;
-  final List<_Question> questions;
-  final int passThreshold; // 正确率百分比
-
-  const _LevelData({
-    required this.levelId,
-    required this.title,
-    required this.subtitle,
-    required this.questions,
-    this.passThreshold = 80,
-  });
-}
-
-// ===================== 4关题目数据 =====================
-
-const _level1Questions = [
-  _Question(
-    question: '"吃" 是什么意思？',
-    options: ['to drink', 'to eat', 'to cook', 'to buy'],
-    correctIndex: 1,
-    explanation: '吃 (chī) = to eat',
-  ),
-  _Question(
-    question: '"水" 是什么意思？',
-    options: ['tea', 'water', 'rice', 'fruit'],
-    correctIndex: 1,
-    explanation: '水 (shuǐ) = water',
-  ),
-  _Question(
-    question: '"饭店" 是什么意思？',
-    options: ['hotel', 'restaurant', 'supermarket', 'kitchen'],
-    correctIndex: 1,
-    explanation: '饭店 (fàndiàn) = restaurant',
-  ),
-  _Question(
-    question: '"米饭" 是什么意思？',
-    options: ['noodles', 'bread', 'cooked rice', 'soup'],
-    correctIndex: 2,
-    explanation: '米饭 (mǐfàn) = cooked rice',
-  ),
-  _Question(
-    question: '"多少钱" 是什么意思？',
-    options: ['how many', 'how much', 'what time', 'where'],
-    correctIndex: 1,
-    explanation: '多少钱 (duōshao qián) = how much (money)',
-  ),
-];
-
-const _level2Questions = [
-  _Question(
-    question: '听音选择："hē"',
-    options: ['吃', '喝', '水', '茶'],
-    correctIndex: 1,
-    explanation: '喝 (hē) = to drink',
-  ),
-  _Question(
-    question: '听音选择："chá"',
-    options: ['茶', '菜', '吃', '查'],
-    correctIndex: 0,
-    explanation: '茶 (chá) = tea',
-  ),
-  _Question(
-    question: '听音选择："mǎi"',
-    options: ['卖', '买', '麦', '埋'],
-    correctIndex: 1,
-    explanation: '买 (mǎi) = to buy',
-  ),
-  _Question(
-    question: '听音选择："piányi"',
-    options: ['便宜', '片一', '偏宜', '便宜'],
-    correctIndex: 0,
-    explanation: '便宜 (piányi) = cheap',
-  ),
-];
-
-const _level3Questions = [
-  _Question(
-    question: '服务员：您好，您想____什么？\n顾客：我____一碗米饭。',
-    options: ['吃/要', '喝/买', '看/请', '说/想'],
-    correctIndex: 0,
-    explanation: '正确答案是 "吃/要"',
-  ),
-  _Question(
-    question: '请给我一____水。',
-    options: ['个', '杯', '张', '本'],
-    correctIndex: 1,
-    explanation: '一杯水 (yì bēi shuǐ) = a glass of water',
-  ),
-  _Question(
-    question: '这个菜很____，但是很好吃。',
-    options: ['便宜', '贵', '大', '小'],
-    correctIndex: 1,
-    explanation: '贵 (guì) = expensive',
-  ),
-];
-
-const _level4Questions = [
-  _Question(
-    question: '将以下句子按点餐流程排序：\na. 请给我菜单。\nb. 我要一份米饭和鱼。\nc. 谢谢，再见。\nd. 请结账。\ne. 您好，请坐。',
-    options: ['e→a→b→d→c', 'a→e→b→c→d', 'e→b→a→d→c', 'a→b→e→d→c'],
-    correctIndex: 0,
-    explanation: '正确顺序：您好请坐 → 给菜单 → 点菜 → 结账 → 再见',
-  ),
-];
-
-final _allLevels = [
-  _LevelData(
-    levelId: 1,
-    title: 'Level 1: Vocab Match',
-    subtitle: 'Match Chinese words to their meanings',
-    questions: _level1Questions,
-  ),
-  _LevelData(
-    levelId: 2,
-    title: 'Level 2: Listen & Choose',
-    subtitle: 'Listen and select the correct word',
-    questions: _level2Questions,
-  ),
-  _LevelData(
-    levelId: 3,
-    title: 'Level 3: Fill in Blanks',
-    subtitle: 'Complete the dialogue',
-    questions: _level3Questions,
-  ),
-  _LevelData(
-    levelId: 4,
-    title: 'Challenge: Scenario Sort',
-    subtitle: 'Arrange sentences in correct order',
-    questions: _level4Questions,
-    passThreshold: 100,
-  ),
-];
-
-// ===================== LevelScreen =====================
-
 class LevelScreen extends StatefulWidget {
   final int levelId;
-  const LevelScreen({super.key, required this.levelId});
+  final int sceneId;
+  const LevelScreen({super.key, required this.levelId, required this.sceneId});
 
   @override
   State<LevelScreen> createState() => _LevelScreenState();
 }
 
 class _LevelScreenState extends State<LevelScreen> {
-  late final _LevelData _level;
+  Level? _level;
+  String? _error;
+
   int _currentQIndex = 0;
   int? _selectedOption;
   bool _hasAnswered = false;
@@ -180,11 +31,23 @@ class _LevelScreenState extends State<LevelScreen> {
   @override
   void initState() {
     super.initState();
-    _level = _allLevels.firstWhere((l) => l.levelId == widget.levelId);
+    _loadLevel();
   }
 
-  _Question get _currentQ => _level.questions[_currentQIndex];
-  int get _totalQ => _level.questions.length;
+  Future<void> _loadLevel() async {
+    try {
+      final levels = await Di.api.getSceneLevels(widget.sceneId);
+      if (!mounted) return;
+      final level = levels.firstWhere((l) => l.id == widget.levelId);
+      setState(() => _level = level);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = e.toString());
+    }
+  }
+
+  Question get _currentQ => _level!.questions[_currentQIndex];
+  int get _totalQ => _level!.questions.length;
   bool get _isLastQ => _currentQIndex == _totalQ - 1;
 
   void _selectOption(int index) {
@@ -200,6 +63,8 @@ class _LevelScreenState extends State<LevelScreen> {
   void _nextQuestion() {
     if (_isLastQ) {
       setState(() => _showResult = true);
+      final stars = _passed ? min(3, (_accuracy / 33).ceil()) : 0;
+      Di.api.submitProgress(widget.levelId, stars, _accuracy.round());
     } else {
       setState(() {
         _currentQIndex++;
@@ -211,7 +76,7 @@ class _LevelScreenState extends State<LevelScreen> {
   }
 
   double get _accuracy => (_correctCount / _totalQ) * 100;
-  bool get _passed => _accuracy >= _level.passThreshold;
+  bool get _passed => _accuracy >= _level!.passThreshold;
 
   void _retry() {
     setState(() {
@@ -224,15 +89,45 @@ class _LevelScreenState extends State<LevelScreen> {
     });
   }
 
-  void _goBack() => context.go('/study/dialogue-practice');
+  void _goBack() => context.go('/study/dialogue-practice/${widget.sceneId}');
 
   @override
   Widget build(BuildContext context) {
+    if (_error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.springWood14,
+        body: AppSafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.semanticRed,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_level == null) {
+      return const Scaffold(
+        backgroundColor: AppColors.springWood14,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     if (_showResult) return _buildResultView();
     return _buildQuestionView();
   }
-
-  // ===================== 答题视图 =====================
 
   Widget _buildQuestionView() {
     return Scaffold(
@@ -306,7 +201,7 @@ class _LevelScreenState extends State<LevelScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            _level.title,
+            _level!.title,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w900,
@@ -392,7 +287,7 @@ class _LevelScreenState extends State<LevelScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            _currentQ.question,
+            _currentQ.questionText,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w900,
@@ -457,7 +352,8 @@ class _LevelScreenState extends State<LevelScreen> {
                         ? AppColors.semanticRed
                         : AppColors.whisper15,
                 border: Border.all(
-                  color: _hasAnswered && (index == _currentQ.correctIndex || index == _selectedOption)
+                  color: _hasAnswered &&
+                          (index == _currentQ.correctIndex || index == _selectedOption)
                       ? Colors.transparent
                       : AppColors.morandiText,
                   width: 1.5,
@@ -470,7 +366,8 @@ class _LevelScreenState extends State<LevelScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
-                    color: _hasAnswered && (index == _currentQ.correctIndex || index == _selectedOption)
+                    color: _hasAnswered &&
+                            (index == _currentQ.correctIndex || index == _selectedOption)
                         ? Colors.white
                         : AppColors.morandiText,
                   ),
@@ -579,8 +476,6 @@ class _LevelScreenState extends State<LevelScreen> {
     );
   }
 
-  // ===================== 结果视图 =====================
-
   Widget _buildResultView() {
     final starCount = _passed ? min(3, (_accuracy / 33).ceil()) : 0;
 
@@ -630,7 +525,7 @@ class _LevelScreenState extends State<LevelScreen> {
               const SizedBox(height: 8),
               if (!_passed)
                 Text(
-                  'Need ${_level.passThreshold}% to pass',
+                  'Need ${_level!.passThreshold}% to pass',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -658,7 +553,9 @@ class _LevelScreenState extends State<LevelScreen> {
       width: 100,
       height: 100,
       decoration: BoxDecoration(
-        color: _passed ? AppColors.semanticGreen.withValues(alpha: 0.15) : AppColors.semanticRed.withValues(alpha: 0.15),
+        color: _passed
+            ? AppColors.semanticGreen.withValues(alpha: 0.15)
+            : AppColors.semanticRed.withValues(alpha: 0.15),
         border: Border.all(
           color: _passed ? AppColors.semanticGreen : AppColors.semanticRed,
           width: 3,
