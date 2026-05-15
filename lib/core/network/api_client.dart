@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import '../auth/token_store.dart';
+import '../di.dart';
 import '../models/user.dart';
 import '../models/scene.dart';
 import '../models/vocab.dart';
 import '../models/level.dart';
 
 class ApiClient {
-  // Replace with your actual Worker URL after deployment
   static const _baseUrl = 'https://jntest.lonnet.uk';
 
   final Dio _dio;
@@ -25,6 +25,13 @@ class ApiClient {
           options.headers['Authorization'] = 'Bearer $token';
         }
         handler.next(options);
+      },
+      onError: (error, handler) async {
+        if (error.response?.statusCode == 401) {
+          await _tokenStore.clearToken();
+          Di.router?.go('/login');
+        }
+        handler.next(error);
       },
     ));
   }

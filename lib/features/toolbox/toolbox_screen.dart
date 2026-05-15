@@ -80,6 +80,14 @@ class _ToolboxScreenState extends State<ToolboxScreen> {
                 onTap: scene.isUnlockedDefault
                     ? () => context.go('/toolbox/vocab-card/${scene.id}')
                     : null,
+                onLockedTap: scene.isUnlockedDefault
+                    ? null
+                    : () => ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('This scene is coming soon.'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        ),
               ),
             )),
         const SizedBox(height: 48),

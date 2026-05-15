@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import 'core/di.dart';
 import 'theme/app_theme.dart';
 import 'features/shell/main_shell.dart';
 import 'features/auth/splash_screen.dart';
@@ -20,6 +21,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChannels.textInput.invokeMethod('TextInput.hide');
+  Di.router = _router;
   runApp(const MyApp());
 }
 

@@ -87,6 +87,14 @@ class _VocabSceneScreenState extends State<VocabSceneScreen> {
                 onTap: scene.isUnlockedDefault
                     ? () => context.go('/study/vocab-learning/${scene.id}')
                     : null,
+                onLockedTap: scene.isUnlockedDefault
+                    ? null
+                    : () => ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('This scene is coming soon.'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        ),
               ),
             )),
         const SizedBox(height: 48),

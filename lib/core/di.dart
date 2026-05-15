@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'auth/token_store.dart';
 import 'network/api_client.dart';
 import 'audio/audio_cache_manager.dart';
@@ -8,4 +9,7 @@ class Di {
   static final tokenStore = TokenStore();
   static final api = ApiClient(tokenStore);
   static final audioCache = AudioCacheManager();
+
+  // Set by main.dart after router is created, used by the 401 interceptor.
+  static GoRouter? router;
 }
