@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/di.dart';
 import '../../theme/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,15 +17,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // 延迟 2 秒后开始快速渐变消失
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
       setState(() => _opacity = 0.0);
     });
-    // 3 秒后跳转
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) context.go('/login');
-    });
+    Timer(const Duration(seconds: 3), _navigate);
+  }
+
+  Future<void> _navigate() async {
+    if (!mounted) return;
+    final hasToken = await Di.tokenStore.hasToken();
+    if (!mounted) return;
+    context.go(hasToken ? '/study' : '/login');
   }
 
   @override
@@ -47,38 +51,19 @@ class _SplashScreenState extends State<SplashScreen> {
                   border: Border.all(color: AppColors.morandiText, width: 3),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: const [
-                    BoxShadow(
-                      color: AppColors.morandiText,
-                      offset: Offset(4, 4),
-                      blurRadius: 0,
-                    ),
+                    BoxShadow(color: AppColors.morandiText, offset: Offset(4, 4), blurRadius: 0),
                   ],
                 ),
-                child: const Icon(
-                  Icons.school,
-                  size: 40,
-                  color: AppColors.morandiText,
-                ),
+                child: const Icon(Icons.school, size: 40, color: AppColors.morandiText),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'JIN NANG',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.morandiText,
-                  letterSpacing: 2,
-                ),
-              ),
+              const Text('JIN NANG',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900,
+                      color: AppColors.morandiText, letterSpacing: 2)),
               const SizedBox(height: 8),
-              Text(
-                'Learn Chinese, the fun way',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.morandiText.withValues(alpha: 0.6),
-                ),
-              ),
+              Text('Learn Chinese, the fun way',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700,
+                      color: AppColors.morandiText.withValues(alpha: 0.6))),
             ],
           ),
         ),

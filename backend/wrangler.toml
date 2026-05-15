@@ -1,0 +1,15 @@
+name = "jin-nang-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "jin-nang-db"
+database_id = "8d41d772-fefb-4a1d-bdb6-935e0776a42e"
+
+[[r2_buckets]]
+binding = "AUDIO"
+bucket_name = "jin-nang-audio"
+
+[vars]
+WORKER_URL = "https://jntest.lonnet.uk"

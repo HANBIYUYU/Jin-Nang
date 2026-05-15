@@ -246,4 +246,81 @@
 
 ---
 
+30. 2026-05-15 — 确立前后端分离架构
+
+   - 后端选型：Cloudflare Workers（Hono）+ D1（SQLite）+ R2（对象存储）
+   - 放弃 SharedPreferences 本地持久化，数据全部走后端
+   - 明确前后端数据边界：
+     - 打包进 App：按钮音效、字体、UI 图标
+     - 走后端：用户数据、场景/词汇/关卡内容、用户进度、词汇音频
+   - 音频策略：词汇音频存 R2，flutter_cache_manager 管理本地缓存，首次播放下载，后续离线可用
+   - 定义 API 路由（/auth、/scenes、/vocab、/levels、/user/progress）
+   - 规划 Flutter 目标目录结构（core/network、core/audio、features/*/data）
+   - 更新 business_logic.md v1.2、CLAUDE.md
+
+---
+
+31. 2026-05-15 — 前后端接入、后端部署、仓库整理
+
+   - 完成前端全部屏幕的硬编码剥离，接入 CF Workers API
+   - 后端完整部署：D1 建表+种子数据、R2 音频上传、Worker 上线
+   - 自定义域名 jntest.lonnet.uk 绑定至 Worker
+   - JWT 认证链路验证通过（register / login / me / scenes / vocab / levels）
+   - 修复 hono/jwt 在 CF Workers 下的兼容问题，改用 Web Crypto 自实现
+   - Profile 屏幕接入 /auth/me，展示真实用户数据
+   - Dio 401 拦截器：token 失效自动清除并跳回登录页
+   - SelectableCard 新增 onLockedTap，锁定视觉与点击响应解耦
+   - 锁定场景点击弹出 "coming soon" 提示
+   - 仓库结构整理：backend/ 新增 migrations/、README.md，清除无效文件
+
+---
+
+## 纯展示 / 逻辑未完成清单
+
+> 记录当前界面上已渲染但无实际功能或数据链路不完整的部分，供后续开发参考。
+
+### Profile 页
+
+| 元素 | 现状 | 缺失 |
+|------|------|------|
+| 用户名 / 等级 / Rank | 从 /auth/me 读取，只读 | 无编辑入口，无 PATCH 接口 |
+| 头像 | 静态图标 | 无上传，无更换 |
+| Logout | 不存在 | 需要清 token 并跳回登录页 |
+| Notifications | 点击无响应 | 纯占位 |
+| Language Settings | 点击无响应 | 纯占位 |
+| Help & FAQ | 点击无响应 | 纯占位 |
+
+### HomeScreen 任务卡
+
+| 元素 | 现状 | 缺失 |
+|------|------|------|
+| Dialogue Practice 快捷入口 | 跳到场景选择页，和 Vocab Learning 一样 | 应直接进入对话练习，需产品确认流程 |
+| Words learned 副标题 | 显示 total_words_seen，从 API 读 | 数值仅在关卡完成时更新，不反映单词学习进度 |
+
+### 数据与业务逻辑
+
+| 项目 | 现状 | 缺失 |
+|------|------|------|
+| streak_days | 始终为 0 | 无每日签到 / 学习触发的 streak 更新逻辑 |
+| rank | 始终为 Bronze | 无升级规则，无触发时机 |
+| total_words_seen | 关卡完成时粗略累加 | 未按实际学过的词计算，user_vocab_seen 表从未写入 |
+| 关卡 Continue 按钮 | 点击返回对话练习列表 | 无"进入下一关"逻辑，无整体通关流程 |
+| 词汇学习完成 | 点完所有卡片可进入下一步 | 离开页面后学习记录重置，user_vocab_seen 未记录 |
+
+### 音频
+
+| 项目 | 现状 | 缺失 |
+|------|------|------|
+| 词汇音频缓存 | flutter_cache_manager + DeviceFileSource 代码已接入 | 未在真机验证，Web 平台不支持 DeviceFileSource |
+| 按钮音效 | AssetSource 正常 | — |
+
+### 场景与内容
+
+| 项目 | 现状 | 缺失 |
+|------|------|------|
+| Supermarket / Airport | 场景存在于 DB，点击显示 coming soon | 无词库、无关卡数据 |
+| 关卡解锁 | 后端 POST /user/progress 触发解锁下一关 | 前端结果页通过后未刷新关卡列表状态 |
+
+---
+
 *（下次更新请在此下方继续追加）*

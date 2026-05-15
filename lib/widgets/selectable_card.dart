@@ -4,13 +4,15 @@ import 'pressable.dart';
 
 /// 可点击的场景/工具卡片，支持锁定状态。
 ///
-/// onTap == null 时显示锁定态：原色保留，整体蒙上一层半透明灰罩。
+/// onTap == null 时显示锁定态（opacity 0.45 + 锁图标 + 无阴影）。
+/// onLockedTap 在锁定态下仍可响应点击（用于 coming soon 提示），不影响视觉。
 class SelectableCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData icon;
   final Color color;
   final VoidCallback? onTap;
+  final VoidCallback? onLockedTap;
 
   const SelectableCard({
     super.key,
@@ -19,6 +21,7 @@ class SelectableCard extends StatelessWidget {
     required this.icon,
     required this.color,
     this.onTap,
+    this.onLockedTap,
   });
 
   bool get _isLocked => onTap == null;
@@ -107,10 +110,11 @@ class SelectableCard extends StatelessWidget {
     );
 
     if (_isLocked) {
-      return Opacity(
-        opacity: 0.45,
-        child: card,
-      );
+      final locked = Opacity(opacity: 0.45, child: card);
+      if (onLockedTap != null) {
+        return GestureDetector(onTap: onLockedTap, child: locked);
+      }
+      return locked;
     }
 
     return card;

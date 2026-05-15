@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import 'core/di.dart';
 import 'theme/app_theme.dart';
 import 'features/shell/main_shell.dart';
 import 'features/auth/splash_screen.dart';
@@ -20,6 +21,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChannels.textInput.invokeMethod('TextInput.hide');
+  Di.router = _router;
   runApp(const MyApp());
 }
 
@@ -28,23 +30,14 @@ final _shellNavigatorStudyKey = GlobalKey<NavigatorState>(debugLabel: 'study');
 final _shellNavigatorToolboxKey = GlobalKey<NavigatorState>(debugLabel: 'toolbox');
 final _shellNavigatorMeKey = GlobalKey<NavigatorState>(debugLabel: 'me');
 
-/// 卡片式右滑转场（进入时从右侧滑入，返回时向右滑出）
 CustomTransitionPage<T> _slidePage<T>({required Widget child}) {
   return CustomTransitionPage<T>(
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
-      const curve = Curves.easeInOut;
-
-      final tween = Tween(begin: begin, end: end)
-          .chain(CurveTween(curve: curve));
-      final offsetAnimation = animation.drive(tween);
-
-      return SlideTransition(
-        position: offsetAnimation,
-        child: child,
-      );
+      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: Curves.easeInOut));
+      return SlideTransition(position: animation.drive(tween), child: child);
     },
   );
 }
@@ -53,26 +46,12 @@ final GoRouter _router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/splash',
   routes: [
-    // 启动页（全屏，无底部导航）
-    GoRoute(
-      path: '/splash',
-      builder: (context, state) => const SplashScreen(),
-    ),
-    // 登录页（全屏，无底部导航）
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
-    // 注册页（全屏，无底部导航）
-    GoRoute(
-      path: '/register',
-      builder: (context, state) => const RegisterScreen(),
-    ),
-    // 主壳（底部导航 Tab）
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+    GoRoute(path: '/login',  builder: (context, state) => const LoginScreen()),
+    GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
+
     StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) {
-        return MainShell(navigationShell: navigationShell);
-      },
+      builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
       branches: [
         // Study Tab
         StatefulShellBranch(
@@ -82,33 +61,37 @@ final GoRouter _router = GoRouter(
               path: '/study',
               builder: (context, state) => const HomeScreen(),
               routes: [
-                // 场景选择页
                 GoRoute(
                   path: 'vocab-scene',
                   pageBuilder: (context, state) => _slidePage(child: const VocabSceneScreen()),
                 ),
-                // 词汇学习页（6张卡片）
                 GoRoute(
-                  path: 'vocab-learning',
-                  pageBuilder: (context, state) => _slidePage(child: const VocabLearningScreen()),
+                  path: 'vocab-learning/:sceneId',
+                  pageBuilder: (context, state) {
+                    final sceneId = int.parse(state.pathParameters['sceneId']!);
+                    return _slidePage(child: VocabLearningScreen(sceneId: sceneId));
+                  },
                 ),
-                // 对话练习（关卡列表）
                 GoRoute(
-                  path: 'dialogue-practice',
-                  pageBuilder: (context, state) => _slidePage(child: const DialoguePracticeScreen()),
+                  path: 'dialogue-practice/:sceneId',
+                  pageBuilder: (context, state) {
+                    final sceneId = int.parse(state.pathParameters['sceneId']!);
+                    return _slidePage(child: DialoguePracticeScreen(sceneId: sceneId));
+                  },
                 ),
-                // 具体关卡（带参数）
                 GoRoute(
                   path: 'level/:levelId',
                   pageBuilder: (context, state) {
                     final levelId = int.parse(state.pathParameters['levelId']!);
-                    return _slidePage(child: LevelScreen(levelId: levelId));
+                    final sceneId = int.parse(state.uri.queryParameters['sceneId'] ?? '1');
+                    return _slidePage(child: LevelScreen(levelId: levelId, sceneId: sceneId));
                   },
                 ),
               ],
             ),
           ],
         ),
+
         // Toolbox Tab
         StatefulShellBranch(
           navigatorKey: _shellNavigatorToolboxKey,
@@ -117,23 +100,23 @@ final GoRouter _router = GoRouter(
               path: '/toolbox',
               builder: (context, state) => const ToolboxScreen(),
               routes: [
-                // 句子页（Toolbox → Restaurant）
                 GoRoute(
-                  path: 'vocab-card',
-                  pageBuilder: (context, state) => _slidePage(child: const ToolboxCard()),
+                  path: 'vocab-card/:sceneId',
+                  pageBuilder: (context, state) {
+                    final sceneId = int.parse(state.pathParameters['sceneId']!);
+                    return _slidePage(child: ToolboxCard(sceneId: sceneId));
+                  },
                 ),
               ],
             ),
           ],
         ),
+
         // My Tab
         StatefulShellBranch(
           navigatorKey: _shellNavigatorMeKey,
           routes: [
-            GoRoute(
-              path: '/me',
-              builder: (context, state) => const ProfileScreen(),
-            ),
+            GoRoute(path: '/me', builder: (context, state) => const ProfileScreen()),
           ],
         ),
       ],
