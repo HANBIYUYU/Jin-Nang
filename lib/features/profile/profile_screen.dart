@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/di.dart';
 import '../../core/models/user.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/app_safe_area.dart';
+import '../../widgets/pressable.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -47,6 +49,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildStatsRow(),
               const SizedBox(height: 32),
               _buildSettingsList(),
+              const SizedBox(height: 24),
+              _buildLogoutButton(context),
               const SizedBox(height: 48),
             ],
           ),
@@ -178,6 +182,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: _buildSettingsItem(item.$1, item.$2),
           )),
     ]);
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return Pressable(
+      onPressed: () async {
+        await Di.tokenStore.clearToken();
+        if (context.mounted) context.go('/login');
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: AppColors.semanticRed, width: 2),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [BoxShadow(color: AppColors.semanticRed, offset: Offset(3, 3), blurRadius: 0)],
+        ),
+        child: const Center(
+          child: Text('Log Out',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.semanticRed)),
+        ),
+      ),
+    );
   }
 
   Widget _buildSettingsItem(String label, Color iconColor) {
