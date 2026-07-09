@@ -89,7 +89,7 @@ Jin-Nang/
 │   └── README.md              # 后端部署与维护文档
 ├── assets/
 │   ├── audio/                 # 按钮音效（业务音频存 R2）
-│   ├── fonts/                 # Inter + LXGW WenKai
+│   ├── fonts/                 # Inter + 系统默认中文字体
 │   └── icon/
 ├── flutter规范.md
 └── figma规范.md

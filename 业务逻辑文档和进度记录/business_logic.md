@@ -366,7 +366,7 @@ assets/audio/
 - **状态管理**：StatefulWidget + setState（初期，待迁移到 Riverpod/BLoC）
 - **路由**：go_router（StatefulShellRoute.indexedStack）
 - **UI 风格**：粗黑边框 + 硬阴影 + 莫兰迪色系 + 大圆角
-- **字体**：Inter（英文）+ LXGW WenKai（中文），均本地打包
+- **字体**：Inter（英文）+ 系统默认（中文）
 - **图标**：本地 PNG（assets/icon/）
 - **音频播放**：audioplayers
 - **音频缓存**：flutter_cache_manager（词汇音频按需下载后缓存）
@@ -392,7 +392,7 @@ assets/
 ├── audio/
 │   ├── btn_pressed.mp3     # 按钮按下音效（App 行为，非业务内容）
 │   └── btn_released.mp3    # 按钮释放音效
-├── fonts/                  # Inter + LXGW WenKai
+├── fonts/                  # Inter + 系统默认
 └── icon/                   # UI 图标
 ```
 

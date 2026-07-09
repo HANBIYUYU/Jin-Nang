@@ -64,7 +64,7 @@ Feature folders are flat by default (`features/auth/login_screen.dart`); nested 
 ### Theming
 
 - `AppTheme.lightTheme` in `lib/theme/app_theme.dart` is wired into `MaterialApp.router`. There is no dark theme yet.
-- `AppFonts` declares **two font families** with fallback: `Inter` for Latin glyphs, `LXGW WenKai` for Chinese. Always set `fontFamily: AppFonts.english` with `fontFamilyFallback: [AppFonts.chinese]` (already done globally in the theme) — don't hardcode font families on individual `TextStyle`s.
+- `AppFonts` declares **two font families** with fallback: `Inter` for Latin glyphs, system default font for Chinese. Always set `fontFamily: AppFonts.english` with `fontFamilyFallback: [AppFonts.chinese]` (already done globally in the theme) — don't hardcode font families on individual `TextStyle`s.
 - `AppColors` is the only place HEX values live. Two namespaces coexist: standard semantic (`brandPurple`, `semanticRed`, `neutralGray0X`) and the Figma-named Morandi palette (`morandiText`, `baliHai30`, `straw14`, `oldRose15`, …). Tabs in `MainShell` and feature screens use the Figma names.
 
 ### Visual language — thick-border + hard-shadow card system

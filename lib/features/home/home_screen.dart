@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/di.dart';
 import '../../core/models/user.dart';
 import '../../theme/app_colors.dart';
-import '../../theme/app_fonts.dart';
+//import '../../theme/app_fonts.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/app_safe_area.dart';
 import '../../widgets/pressable.dart';
@@ -112,22 +112,21 @@ class _HomeScreenState extends State<HomeScreen> {
         boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(4, 4), blurRadius: 0)],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _buildStatIcon('assets/icon/fire.png'),
-        const SizedBox(height: 5),
+          _buildStatIcon('assets/icon/fire.png'),
+          const SizedBox(height: 5),
         const Text('STREAK',
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
-        const SizedBox(height: 5),
-        RichText(
-          text: TextSpan(
-            style: const TextStyle(fontFamily: AppFonts.english, fontFamilyFallback: [AppFonts.chinese]),
-            children: [
+          const SizedBox(height: 5),
+          RichText(
+            text: TextSpan(
+              children: [
               TextSpan(text: '$days ',
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
               const TextSpan(text: 'Days',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.morandiText)),
-            ],
+              ],
+            ),
           ),
-        ),
       ]),
     );
   }
@@ -142,11 +141,11 @@ class _HomeScreenState extends State<HomeScreen> {
         boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(4, 4), blurRadius: 0)],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _buildStatIcon('assets/icon/cup.png'),
-        const SizedBox(height: 5),
+          _buildStatIcon('assets/icon/cup.png'),
+          const SizedBox(height: 5),
         const Text('RANK',
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
-        const SizedBox(height: 5),
+          const SizedBox(height: 5),
         Text(rank,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.morandiText)),
       ]),
@@ -171,33 +170,33 @@ class _HomeScreenState extends State<HomeScreen> {
       const Text('MISSIONS',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900,
               color: AppColors.morandiText, letterSpacing: -0.65)),
-      const SizedBox(height: 16),
-      Expanded(
-        child: ListView(
-          children: [
-            Pressable(
-              onPressed: () => context.go('/study/vocab-scene'),
-              child: _buildMissionCard(
-                title: 'Vocab\nLearning',
-                subtitle: '${_profile?.totalWordsSeen ?? 0} words learned',
-                color: AppColors.straw14,
-                iconPath: 'assets/icon/study.png',
+        const SizedBox(height: 16),
+        Expanded(
+          child: ListView(
+            children: [
+              Pressable(
+                onPressed: () => context.go('/study/vocab-scene'),
+                child: _buildMissionCard(
+                  title: 'Vocab\nLearning',
+                  subtitle: '${_profile?.totalWordsSeen ?? 0} words learned',
+                  color: AppColors.straw14,
+                  iconPath: 'assets/icon/study.png',
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Pressable(
-              onPressed: () => context.go('/study/vocab-scene'),
-              child: _buildMissionCard(
-                title: 'Dialogue\nPractice',
-                subtitle: 'Pick a scene to practice',
-                color: AppColors.baliHai30,
-                iconPath: 'assets/icon/dialogue_learning.png',
+              const SizedBox(height: 16),
+              Pressable(
+                onPressed: () => context.go('/study/vocab-scene'),
+                child: _buildMissionCard(
+                  title: 'Dialogue\nPractice',
+                  subtitle: 'Pick a scene to practice',
+                  color: AppColors.baliHai30,
+                  iconPath: 'assets/icon/dialogue_learning.png',
+                ),
               ),
-            ),
-            const SizedBox(height: 48),
-          ],
+              const SizedBox(height: 48),
+            ],
+          ),
         ),
-      ),
     ]);
   }
 
@@ -216,19 +215,19 @@ class _HomeScreenState extends State<HomeScreen> {
         boxShadow: const [BoxShadow(color: AppColors.morandiText, offset: Offset(4, 4), blurRadius: 0)],
       ),
       child: Row(children: [
-        _buildMissionIcon(iconPath),
-        const SizedBox(width: 12),
-        Expanded(
+          _buildMissionIcon(iconPath),
+          const SizedBox(width: 12),
+          Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(title,
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900,
                     color: AppColors.morandiText, height: 25 / 20)),
-            const SizedBox(height: 7),
+                const SizedBox(height: 7),
             Text(subtitle,
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700,
                     color: AppColors.morandiText.withValues(alpha: 0.7))),
           ]),
-        ),
+          ),
       ]),
     );
   }

@@ -7,8 +7,8 @@ class AppTheme {
 
   static ThemeData get lightTheme {
     return ThemeData(
-      fontFamily: AppFonts.english,
-      fontFamilyFallback: const [AppFonts.chinese],
+      fontFamily: AppFonts.english, 
+      fontFamilyFallback: const <String>[],  // 空列表
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.brandPurple,
         primary: AppColors.brandPurple,
